@@ -1,0 +1,17 @@
+#ignore everything
+*
+
+#excluding theese files
+!.gitignore
+!.md
+
+!*.pdf
+!*.docx
+
+!*.cpp
+!*.h
+!*.txt
+!*.exe
+
+#even in subdirectories
+!*/
