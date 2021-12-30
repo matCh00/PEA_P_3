@@ -19,6 +19,18 @@ private:
     // czas wykonywania
     time_t timeGA;
 
+    // populacja
+    int population;
+
+    // typ mutacji
+    bool mutationType;
+
+    // prawdopodobieństwo mutacji
+    float mutationProbability;
+
+    // prawdopodobieństwo krzyżowania
+    float crossProbability;
+
 
 public:
 

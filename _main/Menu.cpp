@@ -23,6 +23,10 @@ void Menu::startMenu() {
 
     // defaultowe ustawienia algorytmu
     timeGA = 5;
+    population = 10;
+    mutationType = 1;
+    mutationProbability = 0.01;
+    crossProbability = 0.8;
 
     // instancja grafu
     graph = new Graph();
@@ -65,11 +69,13 @@ void Menu::startMenu() {
                             loop = false;
                         }
 
+                        // TODO pokazywanie parametrów
                         else if (choose == 1) {
 
                             cout << " czas [s]: " << timeGA << endl << endl;
                         }
 
+                        // TODO zmiana parametrów
                         else if (choose == 2) {
 
                             int x;
@@ -91,7 +97,7 @@ void Menu::startMenu() {
                             int cost;
                             double exeTime;
 
-                            ga->settingsGeneticAlgorithm();
+                            ga->settingsGeneticAlgorithm(timeGA, population, mutationType, mutationProbability, crossProbability);
                             exeTime = ga->algorithmGeneticAlgorithm(graph->getMatrix(), path, cost);
 
                             cout << "\nCzas: " << exeTime << " s" << endl;
