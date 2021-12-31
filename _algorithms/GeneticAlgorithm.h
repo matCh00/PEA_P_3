@@ -59,6 +59,12 @@ private:
     // mutacja chromosomów
     void mutationChromosomes();
 
+    // metoda mutacji poprzez wstawianie
+    void mutationInversion(int chap);
+
+    // metoda mutacji poprzez odwrócenie podciągu
+    void mutationInsertion(int chap);
+
 
 public:
 

@@ -76,6 +76,54 @@ void GeneticAlgorithm::crossingChromosomes() {
 
 void GeneticAlgorithm::mutationChromosomes() {
 
+    float probability;
+
+    for (int i = 0; i < population; i++) {
+
+        probability = static_cast <float> (rand()) / (RAND_MAX);
+
+        if (probability < mutationProbability) {
+
+            // pierwsza metoda mutacji
+            if (mutationType == 1) {
+                mutationInversion(i);
+            }
+
+            // druga metoda mutacji
+            else if (mutationType == 2) {
+                mutationInsertion(i);
+            }
+        }
+    }
+}
+
+
+
+void GeneticAlgorithm::mutationInsertion(int chap) {
+
+    auto first = perm[chap].begin() + 1 + (rand() % matrixSize - 1);
+    auto last = perm[chap].begin() + 1 + (rand() % matrixSize - 1);
+
+    perm[chap].insert(first, *last);
+    perm[chap].erase(last);
+}
+
+
+
+void GeneticAlgorithm::mutationInversion(int chap) {
+
+    int first = rand() % (matrixSize - 1) + 1;
+    int second = 0;
+
+    do {
+        second = rand() % (matrixSize - 1) + 1;
+    } while (first == second);
+
+    if (second < first) {
+        swap(first, second);
+    }
+
+    reverse(perm[chap].begin() + first, perm[chap].begin() + second);
 }
 
 
