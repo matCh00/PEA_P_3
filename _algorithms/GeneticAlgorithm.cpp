@@ -231,7 +231,7 @@ void GeneticAlgorithm::reducePopulation() {
         }
     }
 
-    if((int)perm.size() > population) {
+    if(perm.size() > population) {
 
         perm.erase(perm.begin() + population, perm.end());
         costs.erase(costs.begin() + population, costs.end());
@@ -242,11 +242,39 @@ void GeneticAlgorithm::reducePopulation() {
 
 double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalMatrix, vector<int> &bestPath, int &bestCost) {
 
+    Timer timer;
+
+    // rozpoczęcie mierzenia czasu
+    timer.start();
+
     matrix = originalMatrix;
     matrixSize = originalMatrix.size();
 
     costs.resize(population);
     perm.resize(population);
 
-    return 0;
+    // początkowa populacja chromosomów
+    this->firstPopulation();
+
+    // wykonywanie przez określony czas
+    while (timer.stop() < executionTime) {
+
+        // krzyżowanie chromosomów
+        this->crossingChromosomes();
+
+        // mutacja
+        this->mutationChromosomes();
+
+        // ocena przystosowania chromosomów
+        this->fitnessAssessment();
+
+        // utworzenie nowej populacji
+        this->reducePopulation();
+    }
+
+    // najlepsze znalezione rozwiązanie
+    bestCost = costs[0];
+    //bestPath = ;
+
+    return timer.stop();
 }

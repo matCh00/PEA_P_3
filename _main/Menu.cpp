@@ -34,7 +34,7 @@ void Menu::startMenu() {
 
     while (run) {
 
-        cout << "\n [1] - wczytaj dane z pliku \n"
+        cout << "\n [1] - wczytaj dane z pliku \n"    // C:/Users/matic/Desktop/PEA/sourcesAsymmetricTSP/ftv170.atsp
                 "  [2] - algorytm genetyczny \n"
                 " [9] - pomiary automatyczne \n"
                 " [0] - wyjscie \n";
@@ -69,21 +69,35 @@ void Menu::startMenu() {
                             loop = false;
                         }
 
-                        // TODO pokazywanie parametrów
                         else if (choose == 1) {
 
-                            cout << " czas [s]: " << timeGA << endl << endl;
+                            cout << " czas [s]: " << timeGA << endl;
+                            cout << " populacja: " << population << endl;
+                            cout << " typ mutacji: " << mutationType << endl;
+                            cout << " P(mutacja): " << mutationProbability << endl;
+                            cout << " P(krzyzowanie): " << crossProbability << endl << endl;
                         }
 
-                        // TODO zmiana parametrów
                         else if (choose == 2) {
 
                             int x;
-                            cout << "1) czas  ";
+                            cout << "1) czas   2) populacja   3) typ mutacji   4) P(mutacja)   5) P(krzyzowanie)";
                             cin >> x;
 
                             if (x == 1) {
                                 cout << "czas [s]: "; cin >> timeGA;
+                            }
+                            else if (x == 2) {
+                                cout << "populacja: "; cin >> population;
+                            }
+                            else if (x == 3) {
+                                cout << "typ mutacji: "; cin >> mutationType;
+                            }
+                            else if (x == 4) {
+                                cout << "P(mutacja) <0,1>: "; cin >> mutationProbability;
+                            }
+                            else if (x == 5) {
+                                cout << "P(krzyzowanie) <0,1>: "; cin >> crossProbability;
                             }
 
                             cout << endl;
