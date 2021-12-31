@@ -70,6 +70,89 @@ void GeneticAlgorithm::fitnessAssessment() {
 
 void GeneticAlgorithm::crossingChromosomes() {
 
+    vector<vector<int>> childrenPopulation;
+    vector<pair<int, int>> crossed;
+    int temp = 0;
+    vector<float> probability(population);
+
+    for (size_t j = 0; j < probability.size(); j++) {
+        probability[j] = static_cast <float> ((rand()) / (RAND_MAX));
+    }
+
+    for (size_t i = 0; i < probability.size(); i++) {
+        if (probability[i] < crossProbability) {
+            do {
+                temp = rand() % population;
+            } while (temp == i);
+            crossed.push_back(make_pair(i, temp));
+        }
+    }
+
+    crossed.shrink_to_fit();
+
+    for (size_t i = 0; i < crossed.size(); i++) {
+
+        int father = crossed[i].first;
+        int mother = crossed[i].second;
+
+        // krzyżowanie
+        int half = (int)perm[father].size() / 2;
+        vector<int> temp(matrixSize / 2);
+        vector<int> child(matrixSize);
+
+        if (matrixSize % 2 == 0){
+
+            for (int j = 0; j < half; j++) {
+                child[j] = perm[crossed[i].first][j];
+            }
+
+            vector<int> temp2(half);
+            for (int j = 0; j < half; j++) {
+                for (int k = 0; k < matrixSize; k++) {
+
+                    if (perm[father][j + half] == perm[mother][k]) {
+                        temp2[j] = k;
+                    }
+                }
+            }
+
+            sort(temp2.begin(), temp2.end());
+
+            for (int j = 0; j < matrixSize / 2; j++) {
+                child[j + matrixSize / 2] = perm[crossed[i].second][temp2[j]];
+            }
+        }
+
+        else {
+
+            for (int j = 0; j < half + 1; j++) {
+                child[j] = perm[crossed[i].first][j];
+            }
+
+            vector<int> temp2(half);
+            for (int j = 0; j < half; j++) {
+                for (int k = 0; k < matrixSize; k++) {
+                    if (perm[father][j + half + 1] == perm[mother][k]) {
+                        temp2[j] = k;
+                    }
+                }
+            }
+
+            sort(temp2.begin(), temp2.end());
+
+            for (int j = 0; j < matrixSize / 2; j++) {
+                child[j + matrixSize / 2 + 1] = perm[crossed[i].second][temp2[j]];
+            }
+        }
+
+        childrenPopulation.push_back(child);
+    }
+
+    perm.resize(population + childrenPopulation.size());
+
+    for (size_t i = 0; i < childrenPopulation.size(); i++) {
+        perm[i + population] = childrenPopulation[i];
+    }
 }
 
 
