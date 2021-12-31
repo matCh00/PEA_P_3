@@ -65,6 +65,9 @@ private:
     // metoda mutacji poprzez odwrócenie podciągu
     void mutationInsertion(int chap);
 
+    // redukcja populacji
+    void reducePopulation();
+
 
 public:
 

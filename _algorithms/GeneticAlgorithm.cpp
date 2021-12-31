@@ -15,7 +15,7 @@ GeneticAlgorithm::~GeneticAlgorithm() {
 /*
  * Algorytm genetyczny
  */
-
+// TODO opisać algorytm i dodać komentarze do kodu
 void GeneticAlgorithm::settingsGeneticAlgorithm(time_t executionTime, int population, bool mutationType, float mutationProbability, float crossProbability) {
 
     this->executionTime = executionTime;
@@ -73,17 +73,18 @@ void GeneticAlgorithm::crossingChromosomes() {
     vector<vector<int>> childrenPopulation;
     vector<pair<int, int>> crossed;
     int temp = 0;
-    vector<float> probability(population);
+    float probability;
 
-    for (size_t j = 0; j < probability.size(); j++) {
-        probability[j] = static_cast <float> ((rand()) / (RAND_MAX));
-    }
+    for (size_t i = 0; i < population; i++) {
 
-    for (size_t i = 0; i < probability.size(); i++) {
-        if (probability[i] < crossProbability) {
+        // prawdopodobieństwo krzyżowania
+        probability = static_cast <float> ((rand()) / (RAND_MAX));
+
+        if (probability < crossProbability) {
             do {
                 temp = rand() % population;
             } while (temp == i);
+
             crossed.push_back(make_pair(i, temp));
         }
     }
@@ -145,11 +146,13 @@ void GeneticAlgorithm::crossingChromosomes() {
             }
         }
 
+        // dodawanie dziecka do nowej populacji
         childrenPopulation.push_back(child);
     }
 
     perm.resize(population + childrenPopulation.size());
 
+    // nowa populacja
     for (size_t i = 0; i < childrenPopulation.size(); i++) {
         perm[i + population] = childrenPopulation[i];
     }
@@ -163,6 +166,7 @@ void GeneticAlgorithm::mutationChromosomes() {
 
     for (int i = 0; i < population; i++) {
 
+        // prawdopodobieństwo mutacji
         probability = static_cast <float> (rand()) / (RAND_MAX);
 
         if (probability < mutationProbability) {
@@ -211,7 +215,35 @@ void GeneticAlgorithm::mutationInversion(int chap) {
 
 
 
+void GeneticAlgorithm::reducePopulation() {
+
+    vector<int> temp(population);
+
+    for (size_t i = 0; i < (int)perm.size()-1; i++) {
+
+        for (size_t j = 0; j < perm.size() - 1; j++) {
+
+            if (costs[j] > costs[j + 1]) {
+
+                swap(costs[j], costs[j + 1]);
+                swap(perm[j], perm[j + 1]);
+            }
+        }
+    }
+
+    if((int)perm.size() > population) {
+
+        perm.erase(perm.begin() + population, perm.end());
+        costs.erase(costs.begin() + population, costs.end());
+    }
+}
+
+
+
 double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalMatrix, vector<int> &bestPath, int &bestCost) {
+
+    matrix = originalMatrix;
+    matrixSize = originalMatrix.size();
 
     costs.resize(population);
     perm.resize(population);
