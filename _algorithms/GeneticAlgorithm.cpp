@@ -15,7 +15,7 @@ GeneticAlgorithm::~GeneticAlgorithm() {
 /*
  * Algorytm genetyczny
  */
-// TODO opisać algorytm i dodać komentarze do kodu
+// TODO opisać algorytm i dodać komentarze do kodu, duże wyniki - są mniejsze po czasie ale i tak za duże, zwrócić optymalną ścieżkę
 void GeneticAlgorithm::settingsGeneticAlgorithm(time_t executionTime, int population, bool mutationType, float mutationProbability, float crossProbability) {
 
     this->executionTime = executionTime;
@@ -172,13 +172,13 @@ void GeneticAlgorithm::mutationChromosomes() {
         if (probability < mutationProbability) {
 
             // pierwsza metoda mutacji
-            if (mutationType == 1) {
-                mutationInversion(i);
+            if (mutationType == 0) {
+                mutationTransposition(i);
             }
 
             // druga metoda mutacji
-            else if (mutationType == 2) {
-                mutationInsertion(i);
+            else if (mutationType == 1) {
+                mutationInversion(i);
             }
         }
     }
@@ -186,13 +186,16 @@ void GeneticAlgorithm::mutationChromosomes() {
 
 
 
-void GeneticAlgorithm::mutationInsertion(int chap) {
+void GeneticAlgorithm::mutationTransposition(int chap) {
 
-    auto first = perm[chap].begin() + 1 + (rand() % matrixSize - 1);
-    auto last = perm[chap].begin() + 1 + (rand() % matrixSize - 1);
+    int first = rand() % (matrixSize - 1) + 1;
+    int second = 0;
 
-    perm[chap].insert(first, *last);
-    perm[chap].erase(last);
+    do {
+        second = rand() % (matrixSize - 1) + 1;
+    } while (first == second);
+
+    swap(perm[chap][first], perm[chap][second]);
 }
 
 

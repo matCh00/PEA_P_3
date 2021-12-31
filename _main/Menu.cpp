@@ -23,7 +23,7 @@ void Menu::startMenu() {
 
     // defaultowe ustawienia algorytmu
     timeGA = 5;
-    population = 10;
+    population = 50;
     mutationType = 1;
     mutationProbability = 0.01;
     crossProbability = 0.8;

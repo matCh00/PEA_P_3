@@ -59,11 +59,11 @@ private:
     // mutacja chromosomów
     void mutationChromosomes();
 
-    // metoda mutacji poprzez wstawianie
-    void mutationInversion(int chap);
+    // metoda mutacji poprzez zamianę 2 elementów
+    void mutationTransposition(int chap);
 
     // metoda mutacji poprzez odwrócenie podciągu
-    void mutationInsertion(int chap);
+    void mutationInversion(int chap);
 
     // redukcja populacji
     void reducePopulation();
