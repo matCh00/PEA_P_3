@@ -20,6 +20,12 @@ private:
     // liczba miast
     int matrixSize;
 
+    // permutacje miast
+    vector<vector<int>> perm;
+
+    // koszty ścieżek
+    vector<int> costs;
+
     // optymalny koszt
     int cost;
 
@@ -40,6 +46,18 @@ private:
 
     // czas wykonania
     time_t executionTime;
+
+    // tworzenie początkowej populacji
+    void firstPopulation();
+
+    // ocena przystosowania populacji
+    void fitnessAssessment();
+
+    // krzyżowanie chromosomów
+    void crossingChromosomes();
+
+    // mutacja chromosomów
+    void mutationChromosomes();
 
 
 public:
