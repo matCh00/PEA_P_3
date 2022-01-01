@@ -27,97 +27,88 @@ void GeneticAlgorithm::settingsGeneticAlgorithm(time_t executionTime, int popula
 
 
 
-vector<int> GeneticAlgorithm::findInitialSolution() {
-
-    vector<int> route;
-    route.resize(matrixSize);
-
-    int localMinimum = 0;
-    int bestMinimum, tempBest = 0, oldTempBest;
-
-    // tablica odwiedzonych wierzchołków
-    vector<int> visitedTab(matrixSize, 0);
-
-    bool ifVisited;
-
-    // dla każdego wierzchołka
-    for (int i = 0; i < matrixSize; i++) {
-
-        bestMinimum = INT_MAX;
-        oldTempBest = tempBest;
-
-        // szukamy najkorzystniejsze rozwiązanie (dla niesprawdzonych wierzchołków)
-        for (int j = 0; j < matrixSize; j++) {
-
-            ifVisited = true;
-
-            if (j != oldTempBest) {
-
-                for (int k = 0; k <= i; k++) {
-
-                    if (j == visitedTab[k]) {
-                        ifVisited = false;
-                    }
-                }
-
-                // znalezienie lokalnego minimum dla danego wierzchołka
-                if (matrix[oldTempBest][j] < bestMinimum && ifVisited == true) {
-                    bestMinimum = matrix[oldTempBest][j];
-                    tempBest = j;
-                }
-            }
-        }
-        if (i < matrixSize - 1) {
-
-            // dodajemy optymalny koszt dla danego wierzchołka
-            localMinimum = localMinimum + bestMinimum;
-        }
-        else {
-
-            // dodajemy koszt z ostatniego wierzchołka do pierwszego
-            localMinimum = localMinimum + matrix[oldTempBest][0];
-        }
-
-        // dodajemy do ścieżki optymalny wierzchołek
-        route.push_back(oldTempBest);
-        visitedTab[i] = tempBest;
-    }
-
-    // dodajemy na koniec ścieżki wierzchołek startowy
-    route.push_back(0);
-
-    visitedTab.clear();
-
-    return route;
-}
-
-
-
 void GeneticAlgorithm::firstPopulation() {
 
     vector<int> cities;
-
     cities.resize(matrixSize);
 
 
 // SPOSÓB LOSOWY
 
-    // wypełnienie wektora
-    iota(begin(cities), end(cities), 0);
+//    iota(begin(cities), end(cities), 0);
+//
+//    for (int i = 0; i < population; i++) {
+//
+//        random_shuffle(cities.begin() + 1, cities.end());
+//        pop[i] = cities;
+//    }
+
+
+// SPOSÓB ZACHŁANNY (z Tabu Search)
 
     for (int i = 0; i < population; i++) {
 
-        random_shuffle(cities.begin() + 1, cities.end());
+        cities.clear();
+        cities.resize(matrixSize);
+
+        int localMinimum = 0;
+        int bestMinimum, tempBest = 0, oldTempBest;
+
+        // tablica odwiedzonych wierzchołków
+        vector<int> visitedTab(matrixSize, 0);
+
+        bool ifVisited;
+
+        // dla każdego wierzchołka
+        for (int i = 0; i < matrixSize; i++) {
+
+            bestMinimum = INT_MAX;
+            oldTempBest = tempBest;
+
+            // szukamy najkorzystniejsze rozwiązanie (dla niesprawdzonych wierzchołków)
+            for (int j = 0; j < matrixSize; j++) {
+
+                ifVisited = true;
+
+                if (j != oldTempBest) {
+
+                    for (int k = 0; k <= i; k++) {
+
+                        if (j == visitedTab[k]) {
+                            ifVisited = false;
+                        }
+                    }
+
+                    // znalezienie lokalnego minimum dla danego wierzchołka
+                    if (matrix.at(oldTempBest).at(j) < bestMinimum && ifVisited == true) {
+                        bestMinimum = matrix.at(oldTempBest).at(j);
+                        tempBest = j;
+                    }
+                }
+            }
+            if (i < matrixSize - 1) {
+
+                // dodajemy optymalny koszt dla danego wierzchołka
+                localMinimum = localMinimum + bestMinimum;
+            }
+            else {
+
+                // dodajemy koszt z ostatniego wierzchołka do pierwszego
+                localMinimum = localMinimum + matrix.at(oldTempBest).at(0);
+            }
+
+            // dodajemy do ścieżki optymalny wierzchołek
+            cities.push_back(oldTempBest);
+            visitedTab[i] = tempBest;
+        }
+
+        // dodajemy na koniec ścieżki wierzchołek startowy
+        //cities.push_back(0);
+
+        visitedTab.clear();
+
         pop[i] = cities;
     }
-
-
-// SPOSÓB ZACHŁANNY
-
-//    for (int i = 0; i < population; i++) {
-//
-//        pop[i] = findInitialSolution();
-//    }
 }
 
 
@@ -174,7 +165,7 @@ void GeneticAlgorithm::crossingChromosomes() {
         int mother = crossed[i].second;
 
         // krzyżowanie
-        int half = (int)pop[father].size() / 2;
+        int half = pop[father].size() / 2;
         vector<int> temp(matrixSize / 2);
         vector<int> child(matrixSize);
 

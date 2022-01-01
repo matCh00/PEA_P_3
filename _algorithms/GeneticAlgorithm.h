@@ -68,10 +68,6 @@ private:
     // redukcja populacji
     void reducePopulation();
 
-    // znalezienie pierwszego rozwiązania
-    // algorytm zachłanny (z Tabu Search)
-    vector<int> findInitialSolution();
-
 
 public:
 
