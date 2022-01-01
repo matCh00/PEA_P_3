@@ -20,8 +20,8 @@ private:
     // liczba miast
     int matrixSize;
 
-    // permutacje miast
-    vector<vector<int>> perm;
+    // populacja
+    vector<vector<int>> pop;
 
     // koszty ścieżek
     vector<int> costs;
@@ -32,7 +32,7 @@ private:
     // optymalna ścieżka
     vector<int> path;
 
-    // populacja
+    // liczebność populacji
     int population;
 
     // typ mutacji
@@ -67,6 +67,10 @@ private:
 
     // redukcja populacji
     void reducePopulation();
+
+    // znalezienie pierwszego rozwiązania
+    // algorytm zachłanny (z Tabu Search)
+    vector<int> findInitialSolution();
 
 
 public:

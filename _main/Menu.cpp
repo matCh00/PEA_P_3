@@ -81,7 +81,7 @@ void Menu::startMenu() {
                         else if (choose == 2) {
 
                             int x;
-                            cout << "1) czas   2) populacja   3) typ mutacji   4) P(mutacja)   5) P(krzyzowanie)";
+                            cout << "1) czas   2) populacja   3) typ mutacji   4) P(mutacja)   5) P(krzyzowanie)  ";
                             cin >> x;
 
                             if (x == 1) {
