@@ -20,18 +20,6 @@ private:
     // liczba miast
     int matrixSize;
 
-    // populacja
-    vector<vector<int>> pop;
-
-    // koszty ścieżek
-    vector<int> costs;
-
-    // optymalny koszt
-    int cost;
-
-    // optymalna ścieżka
-    vector<int> path;
-
     // liczebność populacji
     int population;
 
@@ -41,32 +29,51 @@ private:
     // prawdopodobieństwo mutacji
     float mutationProbability;
 
+    // typ krzyżowania
+    bool crossType;
+
     // prawdopodobieństwo krzyżowania
     float crossProbability;
 
     // czas wykonania
     time_t executionTime;
 
-    // tworzenie początkowej populacji
-    void firstPopulation();
 
-    // ocena przystosowania populacji
-    void fitnessAssessment();
 
-    // krzyżowanie chromosomów
-    void crossingChromosomes();
+    void generateInitialPopulation(vector<vector<int>> &pop);
 
-    // mutacja chromosomów
-    void mutationChromosomes();
+    void sortVector(vector<vector<int>> &vect);
 
-    // metoda mutacji poprzez zamianę 2 elementów
-    void mutationTransposition(int chap);
+    void overwritePopulation(vector<vector<int>> &population, vector<vector<int>> popul);
 
-    // metoda mutacji poprzez odwrócenie podciągu
-    void mutationInversion(int chap);
+    void mutation(vector<int> &ind);
 
-    // redukcja populacji
-    void reducePopulation();
+    void doCrossover(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
+
+
+    void OrderCO(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
+
+    void EnhancedSequentialCO(vector<int> parent1, vector<int> parent2, vector<int> &offspring);
+
+    vector<int> tournamentSelection(vector<vector<int>> pop);
+
+    int calculateCost(vector<int> a);
+
+    void reverseVector(int a, int b, vector<int> &currentRoute);
+
+    void insertVector(int a, int b, vector<int> &currentRoute);
+
+    void swapVector(int a, int b, vector<int> &currentRoute);
+
+    void calculateInsert(int i, int j, int &balance, vector<int> currentRoute);
+
+    void calculateReverse(int i, int j, int &balance, vector<int> currentRoute);
+
+    void calculateSwap(int i, int j, int &balance, vector<int> currentRoute);
+
+    int getInitialGreedyAndRandom(vector<int> &bestTab);
+
+    int getInitialGreedy(vector<int> &bestTab);
 
 
 public:
@@ -81,7 +88,7 @@ public:
     double algorithmGeneticAlgorithm(vector<vector<int>> originalMatrix, vector<int> &bestPath, int &bestCost);
 
     // ustawienia Genetic Algorithm
-    void settingsGeneticAlgorithm(time_t executionTime, int population, bool mutationType, float mutationProbability, float crossProbability);
+    void settingsGeneticAlgorithm(time_t executionTime, int population, bool mutationType, float mutationProbability, bool crossType, float crossProbability);
 };
 
 

@@ -26,6 +26,7 @@ void Menu::startMenu() {
     population = 50;
     mutationType = 1;
     mutationProbability = 0.01;
+    crossType = 1;
     crossProbability = 0.8;
 
     // instancja grafu

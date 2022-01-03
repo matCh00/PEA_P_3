@@ -28,6 +28,9 @@ private:
     // prawdopodobieństwo mutacji
     float mutationProbability;
 
+    // typ krzyżowania
+    bool crossType;
+
     // prawdopodobieństwo krzyżowania
     float crossProbability;
 

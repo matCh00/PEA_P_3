@@ -16,12 +16,13 @@ GeneticAlgorithm::~GeneticAlgorithm() {
  * Algorytm genetyczny
  */
 // TODO opisać algorytm i dodać komentarze do kodu, duże wyniki - są mniejsze po czasie ale i tak za duże, zwrócić optymalną ścieżkę
-void GeneticAlgorithm::settingsGeneticAlgorithm(time_t executionTime, int population, bool mutationType, float mutationProbability, float crossProbability) {
+void GeneticAlgorithm::settingsGeneticAlgorithm(time_t executionTime, int population, bool mutationType, float mutationProbability, bool crossType, float crossProbability) {
 
     this->executionTime = executionTime;
     this->population = population;
     this->mutationType = mutationType;
     this->mutationProbability = mutationProbability;
+    this->crossType = crossType;
     this->crossProbability = crossProbability;
 }
 
