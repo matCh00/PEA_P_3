@@ -397,3 +397,69 @@ void GeneticAlgorithm::EnhancedSequentialCO(vector<int> parent1, vector<int> par
     //showVector(offspring);
 }
 
+
+
+void GeneticAlgorithm::mutation(vector<int> &ind) {
+    random_device randomSrc;
+    default_random_engine randomGen(randomSrc());
+    uniform_int_distribution<> nodeRand(1, matrixSize - 1);
+
+    int bestI = 0;
+    int bestJ = 0;
+    int bestBalance = INT_MAX;
+
+    int i, j, balance = 0;
+
+
+    if (mutationType == 0) {
+        for (int k = 0; k < 2; k++) { //po 2 losowania, wybierane lepsze
+            do {
+                i = nodeRand(randomGen);
+                j = nodeRand(randomGen);
+            } while (i == j || j < i);
+
+            calculateSwap(i, j, balance, ind);
+            if (balance < bestBalance) {
+                bestI = i;
+                bestJ = j;
+                bestBalance = balance;
+            }
+        }
+        swapVector(bestI, bestJ, ind);
+    } else if (mutationType == 2) {
+        for (int k = 0; k < 2; k++) {
+            do {
+                i = nodeRand(randomGen);
+                j = nodeRand(randomGen);
+            } while (i == j || j < i);
+
+            calculateReverse(i, j, balance, ind);
+            if (balance < bestBalance) {
+                bestI = i;
+                bestJ = j;
+                bestBalance = balance;
+            }
+        }
+
+        reverseVector(bestI, bestJ, ind);
+    } else if (mutationType == 1) {
+        for (int k = 0; k < 2; k++) {
+            do {
+                i = nodeRand(randomGen);
+                j = nodeRand(randomGen);
+            } while (i == j - 1 || i == j || i == j + 1);
+
+            calculateInsert(i, j, balance, ind);
+            if (balance < bestBalance) {
+                bestI = i;
+                bestJ = j;
+                bestBalance = balance;
+            }
+        }
+        insertVector(bestI, bestJ, ind);
+    }
+
+    ind.at(matrixSize + 1) += bestBalance;
+}
+
+
