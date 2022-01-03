@@ -28,290 +28,6 @@ void GeneticAlgorithm::settingsGeneticAlgorithm(time_t executionTime, int popula
 
 
 
-void GeneticAlgorithm::firstPopulation() {
-
-    vector<int> cities;
-    cities.resize(matrixSize);
-
-
-// SPOSÓB LOSOWY
-
-//    iota(begin(cities), end(cities), 0);
-//
-//    for (int i = 0; i < population; i++) {
-//
-//        random_shuffle(cities.begin() + 1, cities.end());
-//        pop[i] = cities;
-//    }
-
-
-// SPOSÓB ZACHŁANNY (z Tabu Search)
-
-    for (int i = 0; i < population; i++) {
-
-        cities.clear();
-        cities.resize(matrixSize);
-
-        int localMinimum = 0;
-        int bestMinimum, tempBest = 0, oldTempBest;
-
-        // tablica odwiedzonych wierzchołków
-        vector<int> visitedTab(matrixSize, 0);
-
-        bool ifVisited;
-
-        // dla każdego wierzchołka
-        for (int i = 0; i < matrixSize; i++) {
-
-            bestMinimum = INT_MAX;
-            oldTempBest = tempBest;
-
-            // szukamy najkorzystniejsze rozwiązanie (dla niesprawdzonych wierzchołków)
-            for (int j = 0; j < matrixSize; j++) {
-
-                ifVisited = true;
-
-                if (j != oldTempBest) {
-
-                    for (int k = 0; k <= i; k++) {
-
-                        if (j == visitedTab[k]) {
-                            ifVisited = false;
-                        }
-                    }
-
-                    // znalezienie lokalnego minimum dla danego wierzchołka
-                    if (matrix.at(oldTempBest).at(j) < bestMinimum && ifVisited == true) {
-                        bestMinimum = matrix.at(oldTempBest).at(j);
-                        tempBest = j;
-                    }
-                }
-            }
-            if (i < matrixSize - 1) {
-
-                // dodajemy optymalny koszt dla danego wierzchołka
-                localMinimum = localMinimum + bestMinimum;
-            }
-            else {
-
-                // dodajemy koszt z ostatniego wierzchołka do pierwszego
-                localMinimum = localMinimum + matrix.at(oldTempBest).at(0);
-            }
-
-            // dodajemy do ścieżki optymalny wierzchołek
-            cities.push_back(oldTempBest);
-            visitedTab[i] = tempBest;
-        }
-
-        // dodajemy na koniec ścieżki wierzchołek startowy
-        //cities.push_back(0);
-
-        visitedTab.clear();
-
-        pop[i] = cities;
-    }
-}
-
-
-
-void GeneticAlgorithm::fitnessAssessment() {
-
-    int thisCost;
-    costs.resize(pop.size());
-
-    for (size_t i = 0; i < pop.size(); i++) {
-
-        thisCost = 0;
-
-        // zliczanie kosztu
-        for (size_t j = 0; j < pop[i].size() - 1; j++) {
-            thisCost += matrix[pop[i][j]][pop[i][j + 1]];
-        }
-
-        // przejście z ostatniego miasta do pierwszego
-        thisCost += matrix[pop[i][matrixSize - 1]][pop[i][0]];
-
-        costs[i] = thisCost;
-    }
-}
-
-
-
-void GeneticAlgorithm::crossingChromosomes() {
-
-    vector<vector<int>> childrenPopulation;
-    vector<pair<int, int>> crossed;
-    int temp = 0;
-    float probability;
-
-    for (size_t i = 0; i < population; i++) {
-
-        // prawdopodobieństwo krzyżowania
-        probability = static_cast <float> ((rand()) / (RAND_MAX));
-
-        if (probability < crossProbability) {
-            do {
-                temp = rand() % population;
-            } while (temp == i);
-
-            crossed.push_back(make_pair(i, temp));
-        }
-    }
-
-    crossed.shrink_to_fit();
-
-    for (size_t i = 0; i < crossed.size(); i++) {
-
-        int father = crossed[i].first;
-        int mother = crossed[i].second;
-
-        // krzyżowanie
-        int half = pop[father].size() / 2;
-        vector<int> temp(matrixSize / 2);
-        vector<int> child(matrixSize);
-
-        if (matrixSize % 2 == 0) {
-
-            for (int j = 0; j < half; j++) {
-                child[j] = pop[crossed[i].first][j];
-            }
-
-            vector<int> temp2(half);
-            for (int j = 0; j < half; j++) {
-                for (int k = 0; k < matrixSize; k++) {
-
-                    if (pop[father][j + half] == pop[mother][k]) {
-                        temp2[j] = k;
-                    }
-                }
-            }
-
-            sort(temp2.begin(), temp2.end());
-
-            for (int j = 0; j < matrixSize / 2; j++) {
-                child[j + matrixSize / 2] = pop[crossed[i].second][temp2[j]];
-            }
-        }
-
-        else {
-
-            for (int j = 0; j < half + 1; j++) {
-                child[j] = pop[crossed[i].first][j];
-            }
-
-            vector<int> temp2(half);
-            for (int j = 0; j < half; j++) {
-                for (int k = 0; k < matrixSize; k++) {
-                    if (pop[father][j + half + 1] == pop[mother][k]) {
-                        temp2[j] = k;
-                    }
-                }
-            }
-
-            sort(temp2.begin(), temp2.end());
-
-            for (int j = 0; j < matrixSize / 2; j++) {
-                child[j + matrixSize / 2 + 1] = pop[crossed[i].second][temp2[j]];
-            }
-        }
-
-        // dodawanie dziecka do nowej populacji
-        childrenPopulation.push_back(child);
-    }
-
-    pop.resize(population + childrenPopulation.size());
-
-    // nowa populacja
-    for (size_t i = 0; i < childrenPopulation.size(); i++) {
-        pop[i + population] = childrenPopulation[i];
-    }
-}
-
-
-
-void GeneticAlgorithm::mutationChromosomes() {
-
-    float probability;
-
-    for (int i = 0; i < population; i++) {
-
-        // prawdopodobieństwo mutacji
-        probability = static_cast <float> (rand()) / (RAND_MAX);
-
-        if (probability < mutationProbability) {
-
-            // pierwsza metoda mutacji
-            if (mutationType == 0) {
-                mutationTransposition(i);
-            }
-
-            // druga metoda mutacji
-            else if (mutationType == 1) {
-                mutationInversion(i);
-            }
-        }
-    }
-}
-
-
-
-void GeneticAlgorithm::mutationTransposition(int chap) {
-
-    int first = rand() % (matrixSize - 1) + 1;
-    int second = 0;
-
-    do {
-        second = rand() % (matrixSize - 1) + 1;
-    } while (first == second);
-
-    swap(pop[chap][first], pop[chap][second]);
-}
-
-
-
-void GeneticAlgorithm::mutationInversion(int chap) {
-
-    int first = rand() % (matrixSize - 1) + 1;
-    int second = 0;
-
-    do {
-        second = rand() % (matrixSize - 1) + 1;
-    } while (first == second);
-
-    if (second < first) {
-        swap(first, second);
-    }
-
-    reverse(pop[chap].begin() + first, pop[chap].begin() + second);
-}
-
-
-
-void GeneticAlgorithm::reducePopulation() {
-
-    vector<int> temp(population);
-
-    for (size_t i = 0; i < (int)pop.size() - 1; i++) {
-
-        for (size_t j = 0; j < pop.size() - 1; j++) {
-
-            if (costs[j] > costs[j + 1]) {
-
-                swap(costs[j], costs[j + 1]);
-                swap(pop[j], pop[j + 1]);
-            }
-        }
-    }
-
-    if(pop.size() > population) {
-
-        pop.erase(pop.begin() + population, pop.end());
-        costs.erase(costs.begin() + population, costs.end());
-    }
-}
-
-
-
 double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalMatrix, vector<int> &bestPath, int &bestCost) {
 
     Timer timer;
@@ -322,8 +38,6 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
     matrix = originalMatrix;
     matrixSize = originalMatrix.size();
 
-    costs.resize(population);
-    pop.resize(population);
 
     // początkowa populacja chromosomów
     this->firstPopulation();
@@ -349,4 +63,133 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
     //bestPath = ;
 
     return timer.stop();
+}
+
+
+
+void GeneticAlgorithm::generateInitialPopulation(vector<vector<int>> &pop) {
+
+    for (int i = 1; i < population; i++) {
+        vector<int> route;
+        route.push_back(getInitialGreedyAndRandom(route)); // (n-2)/2 osobnikow losowo zachlannym
+        pop.push_back(route);
+    }
+
+    vector<int> route;
+
+    route.clear();
+    route.push_back(getInitialGreedy(route)); // 1 osobnik zachlannym
+    pop.push_back(route);
+
+    sortVector(pop);
+}
+
+
+
+int GeneticAlgorithm::getInitialGreedy(vector<int> &bestTab) {
+    int localMin = 0;
+    int bestMin, tempBest = 0, oldTempBest = 0;
+    int *visitedTab = new int[matrixSize];
+    for (int i = 0; i < matrixSize; i++) {
+        visitedTab[i] = 0;
+    }
+
+    bool ifVisited;
+    for (int i = 0; i < matrixSize; i++) {
+        bestMin = INT_MAX;
+        oldTempBest = tempBest;
+        for (int j = 0; j < matrixSize; j++) {
+            ifVisited = true;
+            if (j != oldTempBest) {
+                for (int k = 0; k <= i; k++) {
+                    if (j == visitedTab[k]) {
+                        ifVisited = false;
+                    }
+                }
+                if (matrix[oldTempBest][j] < bestMin && ifVisited == true) {
+                    bestMin = matrix[oldTempBest][j];
+                    tempBest = j;
+                }
+            }
+        }
+        if (i < matrixSize - 1)
+            localMin = localMin + bestMin;
+        else
+            localMin = localMin + matrix[oldTempBest][0];
+
+        bestTab.push_back(oldTempBest);
+        visitedTab[i] = tempBest;
+    }
+    bestTab.push_back(0);
+
+    delete[]visitedTab;
+
+    return localMin;
+
+}
+
+
+
+int GeneticAlgorithm::getInitialGreedyAndRandom(vector<int> &bestTab) {
+
+    random_device randomSrc;
+    default_random_engine randomGen(randomSrc());
+    uniform_int_distribution<> nodeRand(0, matrixSize - 1);
+
+    int bestMin, tempBest = 0, oldTempBest = 0;
+    int localMin = 0;
+    int *visitedTab = new int[matrixSize];
+    for (int i = 0; i < matrixSize; i++) {
+        visitedTab[i] = 0;
+    }
+
+    bool ifVisited;
+    int randomNode;
+    int remainingNodes = 3;
+
+    for (int i = 0; i < matrixSize; i++) {
+        bestMin = INT_MAX;
+        oldTempBest = tempBest;
+        if (remainingNodes != 0) {
+            ifVisited = false;
+            while (ifVisited == false) {
+                randomNode = nodeRand(randomGen);
+                ifVisited = true;
+                for (int k = 0; k <= i; k++) {
+                    if (randomNode == visitedTab[k]) {
+                        ifVisited = false;
+                    }
+                }
+            }
+            tempBest = randomNode;
+            bestMin = matrix[oldTempBest][randomNode];
+            remainingNodes--;
+
+        } else {
+            for (int j = 0; j < matrixSize; j++) {
+                ifVisited = true;
+                if (j != oldTempBest) {
+                    for (int k = 0; k <= i; k++) {
+                        if (j == visitedTab[k]) {
+                            ifVisited = false;
+                        }
+                    }
+                    if (matrix[oldTempBest][j] < bestMin && ifVisited == true) {
+                        bestMin = matrix[oldTempBest][j];
+                        tempBest = j;
+                    }
+                }
+            }
+        }
+        if (i < matrixSize - 1)
+            localMin = localMin + bestMin;
+        else
+            localMin = localMin + matrix[oldTempBest][0];
+
+        bestTab.push_back(oldTempBest);
+        visitedTab[i] = tempBest;
+    }
+    bestTab.push_back(0);
+
+    return localMin;
 }
