@@ -21,7 +21,7 @@ private:
     int matrixSize;
 
     // liczebność populacji
-    int population;
+    int populationSize;
 
     // typ mutacji
     bool mutationType;
@@ -88,7 +88,7 @@ public:
     double algorithmGeneticAlgorithm(vector<vector<int>> originalMatrix, vector<int> &bestPath, int &bestCost);
 
     // ustawienia Genetic Algorithm
-    void settingsGeneticAlgorithm(time_t executionTime, int population, bool mutationType, float mutationProbability, bool crossType, float crossProbability);
+    void settingsGeneticAlgorithm(time_t executionTime, int populationSize, bool mutationType, float mutationProbability, bool crossType, float crossProbability);
 };
 
 

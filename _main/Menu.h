@@ -20,7 +20,7 @@ private:
     time_t timeGA;
 
     // populacja
-    int population;
+    int populationSize;
 
     // typ mutacji
     bool mutationType;

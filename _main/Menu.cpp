@@ -23,7 +23,7 @@ void Menu::startMenu() {
 
     // defaultowe ustawienia algorytmu
     timeGA = 5;
-    population = 50;
+    populationSize = 50;
     mutationType = 1;
     mutationProbability = 0.01;
     crossType = 1;
@@ -73,7 +73,7 @@ void Menu::startMenu() {
                         else if (choose == 1) {
 
                             cout << " czas [s]: " << timeGA << endl;
-                            cout << " populacja: " << population << endl;
+                            cout << " populacja: " << populationSize << endl;
                             cout << " typ mutacji: " << mutationType << endl;
                             cout << " P(mutacja): " << mutationProbability << endl;
                             cout << " P(krzyzowanie): " << crossProbability << endl << endl;
@@ -89,7 +89,7 @@ void Menu::startMenu() {
                                 cout << "czas [s]: "; cin >> timeGA;
                             }
                             else if (x == 2) {
-                                cout << "populacja: "; cin >> population;
+                                cout << "populacja: "; cin >> populationSize;
                             }
                             else if (x == 3) {
                                 cout << "typ mutacji: "; cin >> mutationType;
@@ -112,7 +112,7 @@ void Menu::startMenu() {
                             int cost;
                             double exeTime;
 
-                            ga->settingsGeneticAlgorithm(timeGA, population, mutationType, mutationProbability, crossProbability);
+                            ga->settingsGeneticAlgorithm(timeGA, populationSize, mutationType, mutationProbability, crossProbability);
                             exeTime = ga->algorithmGeneticAlgorithm(graph->getMatrix(), path, cost);
 
                             cout << "\nCzas: " << exeTime << " s" << endl;
