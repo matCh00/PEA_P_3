@@ -193,3 +193,28 @@ int GeneticAlgorithm::getInitialGreedyAndRandom(vector<int> &bestTab) {
 
     return localMin;
 }
+
+
+
+vector<int> GeneticAlgorithm::tournamentSelection(vector<vector<int>> pop) {
+    vector<int> best;
+    vector<int> ind;
+
+    random_device randomSrc;
+    default_random_engine randomGen(randomSrc());
+    uniform_int_distribution<> indRand(0, pop.size() - 1);
+
+    int k = 2;
+    for (int i = 1; i <= k; i++) {
+        if (i == 1)
+            best = pop.at(indRand(randomGen));
+
+        else {
+            ind = pop.at(indRand(randomGen));
+            if (ind.at(matrixSize + 1) < best.at(matrixSize + 1))
+                best = ind;
+        }
+    }
+
+    return best;
+}
