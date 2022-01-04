@@ -38,42 +38,47 @@ private:
     // czas wykonania
     time_t executionTime;
 
+    // generowanie początkowej populacji
+    void generateFirstPopulation(vector<vector<int>> &firstPopulation);
 
+    // algorytm losowo zachłanny generowania ścieżki
+    int randomGreedyAlgorithm(vector<int> &generatedPath);
 
-    void generateInitialPopulation(vector<vector<int>> &pop);
+    // sortowanie wektora
+    void sortVector(vector<vector<int>> &toSort);
 
-    void sortVector(vector<vector<int>> &vect);
+    // nadpisywanie populacji <- ELITARYZM
+    void overwritePopulation(vector<vector<int>> &oldPopulation, vector<vector<int>> newPopulation);
 
-    void overwritePopulation(vector<vector<int>> &population, vector<vector<int>> popul);
+    // mutacja
+    void mutation(vector<int> &generation);
 
-    void mutation(vector<int> &ind);
+    // krzyżowanie
+    void crossover(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
 
-    void doCrossover(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
+    // metoda krzyżowania - Order Crossover
+    void crossover_OX(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
 
+    // metoda krzyżowania - Enhanced Sequential Constructive Crossover
+    void crossover_ESCX(vector<int> parent1, vector<int> parent2, vector<int> &offspring);
 
-    void OrderCO(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
+    // selekcja rodziców - Turniejowa
+    vector<int> tournamentSelection(vector<vector<int>> currentPopulation);
 
-    void EnhancedSequentialCO(vector<int> parent1, vector<int> parent2, vector<int> &offspring);
+    // liczenie kosztu ścieżki
+    int calculateCost(vector<int> path);
 
-    vector<int> tournamentSelection(vector<vector<int>> pop);
+    // metoda mutacji - Reverse
+    void reverseMutation(int a, int b, vector<int> &path);
 
-    int calculateCost(vector<int> a);
+    // zliczanie kosztu ścieżki po mutacji Reverse
+    void calculateReverseMutation(int i, int j, int &balance, vector<int> path);
 
-    void reverseVector(int a, int b, vector<int> &currentRoute);
+    // metoda mutacji - Insert
+    void insertMutation(int a, int b, vector<int> &path);
 
-    void insertVector(int a, int b, vector<int> &currentRoute);
-
-    void swapVector(int a, int b, vector<int> &currentRoute);
-
-    void calculateInsert(int i, int j, int &balance, vector<int> currentRoute);
-
-    void calculateReverse(int i, int j, int &balance, vector<int> currentRoute);
-
-    void calculateSwap(int i, int j, int &balance, vector<int> currentRoute);
-
-    int getInitialGreedyAndRandom(vector<int> &bestTab);
-
-    int getInitialGreedy(vector<int> &bestTab);
+    // zliczanie kosztu ścieżki po mutacji Insert
+    void calculateInsertMutation(int i, int j, int &balance, vector<int> path);
 
 
 public:

@@ -46,7 +46,8 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
     vector<int> offspring1(matrixSize + 2, 0), offspring2(matrixSize + 2, 0);
 
     // początkowa populacja
-    generateInitialPopulation(population);
+    generateFirstPopulation(population);
+
 
     // wykonywanie przez określony czas
     while (timer.stop() < executionTime) {
@@ -58,15 +59,15 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
             parent2 = tournamentSelection(population);
 
             if (static_cast<float>(rand()) / RAND_MAX < crossProbability) {
-                doCrossover(parent1, parent2, offspring1, offspring2);
+                crossover(parent1, parent2, offspring1, offspring2);
             }
 
             if (static_cast<float>(rand()) / RAND_MAX < mutationProbability) {
                 mutation(offspring1);
                 newPopulation.push_back(offspring1);
 
-                //----crossovery o id 6 i 7 generuja tylko 1 potomka
-                if (crossType != 7) {
+                //----crossover enchanced generuja tylko 1 potomka
+                if (crossType == 0) {
                     mutation(offspring2);
                     newPopulation.push_back(offspring2);
                 }
@@ -91,74 +92,22 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
 
 
 
-void GeneticAlgorithm::generateInitialPopulation(vector<vector<int>> &pop) {
+void GeneticAlgorithm::generateFirstPopulation(vector<vector<int>> &firstPopulation) {
 
-    for (int i = 1; i < populationSize; i++) {
+    for (int i = 0; i < populationSize; i++) {
         vector<int> route;
-        route.push_back(getInitialGreedyAndRandom(route)); // (n-2)/2 osobnikow losowo zachlannym
-        pop.push_back(route);
+        route.push_back(randomGreedyAlgorithm(route)); // losowo zachlannym
+        firstPopulation.push_back(route);
     }
 
-    vector<int> route;
-
-    route.clear();
-    route.push_back(getInitialGreedy(route)); // 1 osobnik zachlannym
-    pop.push_back(route);
-
-    sortVector(pop);
+    sortVector(firstPopulation);
 }
 
 
 
-int GeneticAlgorithm::getInitialGreedy(vector<int> &bestTab) {
-    int localMin = 0;
-    int bestMin, tempBest = 0, oldTempBest = 0;
-    int *visitedTab = new int[matrixSize];
-    for (int i = 0; i < matrixSize; i++) {
-        visitedTab[i] = 0;
-    }
+int GeneticAlgorithm::randomGreedyAlgorithm(vector<int> &generatedPath) {
 
-    bool ifVisited;
-    for (int i = 0; i < matrixSize; i++) {
-        bestMin = INT_MAX;
-        oldTempBest = tempBest;
-        for (int j = 0; j < matrixSize; j++) {
-            ifVisited = true;
-            if (j != oldTempBest) {
-                for (int k = 0; k <= i; k++) {
-                    if (j == visitedTab[k]) {
-                        ifVisited = false;
-                    }
-                }
-                if (matrix[oldTempBest][j] < bestMin && ifVisited == true) {
-                    bestMin = matrix[oldTempBest][j];
-                    tempBest = j;
-                }
-            }
-        }
-        if (i < matrixSize - 1)
-            localMin = localMin + bestMin;
-        else
-            localMin = localMin + matrix[oldTempBest][0];
-
-        bestTab.push_back(oldTempBest);
-        visitedTab[i] = tempBest;
-    }
-    bestTab.push_back(0);
-
-    delete[]visitedTab;
-
-    return localMin;
-
-}
-
-
-
-int GeneticAlgorithm::getInitialGreedyAndRandom(vector<int> &bestTab) {
-
-    random_device randomSrc;
-    default_random_engine randomGen(randomSrc());
-    uniform_int_distribution<> nodeRand(0, matrixSize - 1);
+    Randomize r;
 
     int bestMin, tempBest = 0, oldTempBest = 0;
     int localMin = 0;
@@ -177,7 +126,7 @@ int GeneticAlgorithm::getInitialGreedyAndRandom(vector<int> &bestTab) {
         if (remainingNodes != 0) {
             ifVisited = false;
             while (ifVisited == false) {
-                randomNode = nodeRand(randomGen);
+                randomNode = r.random_mt19937(0, matrixSize - 1);
                 ifVisited = true;
                 for (int k = 0; k <= i; k++) {
                     if (randomNode == visitedTab[k]) {
@@ -210,31 +159,32 @@ int GeneticAlgorithm::getInitialGreedyAndRandom(vector<int> &bestTab) {
         else
             localMin = localMin + matrix[oldTempBest][0];
 
-        bestTab.push_back(oldTempBest);
+        generatedPath.push_back(oldTempBest);
         visitedTab[i] = tempBest;
     }
-    bestTab.push_back(0);
+    generatedPath.push_back(0);
 
     return localMin;
 }
 
 
 
-vector<int> GeneticAlgorithm::tournamentSelection(vector<vector<int>> pop) {
+vector<int> GeneticAlgorithm::tournamentSelection(vector<vector<int>> currentPopulation) {
+
     vector<int> best;
     vector<int> ind;
 
     random_device randomSrc;
     default_random_engine randomGen(randomSrc());
-    uniform_int_distribution<> indRand(0, pop.size() - 1);
+    uniform_int_distribution<> indRand(0, currentPopulation.size() - 1);
 
     int k = 2;
     for (int i = 1; i <= k; i++) {
         if (i == 1)
-            best = pop.at(indRand(randomGen));
+            best = currentPopulation.at(indRand(randomGen));
 
         else {
-            ind = pop.at(indRand(randomGen));
+            ind = currentPopulation.at(indRand(randomGen));
             if (ind.at(matrixSize + 1) < best.at(matrixSize + 1))
                 best = ind;
         }
@@ -245,26 +195,24 @@ vector<int> GeneticAlgorithm::tournamentSelection(vector<vector<int>> pop) {
 
 
 
-void GeneticAlgorithm::doCrossover(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2) {
+void GeneticAlgorithm::crossover(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2) {
 
     switch (crossType) {
-        case 2:
-            OrderCO(parent1, parent2, offspring1, offspring2); // jest gituwa
+        case 0:
+            crossover_OX(parent1, parent2, offspring1, offspring2); // jest gituwa
             break;
 
-            case 7:
-                EnhancedSequentialCO(parent1, parent2, offspring1); //jest gituwa
-                break;
+        case 1:
+            crossover_ESCX(parent1, parent2, offspring1); //jest gituwa
+            break;
     }
 }
 
 
 
-void GeneticAlgorithm::OrderCO(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2) {
+void GeneticAlgorithm::crossover_OX(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2) {
 
-    random_device randomSrc;
-    default_random_engine randomGen(randomSrc());
-    uniform_int_distribution<> nodeRand(1, matrixSize - 1);
+    Randomize r;
 
     vector<int> visitedOffspring1(matrixSize, 0);
     vector<int> visitedOffspring2(matrixSize, 0);
@@ -273,8 +221,8 @@ void GeneticAlgorithm::OrderCO(vector<int> parent1, vector<int> parent2, vector<
     int a, b;
 
     do {
-        a = nodeRand(randomGen);
-        b = nodeRand(randomGen);
+        a = r.random_mt19937(1, matrixSize - 1);
+        b = r.random_mt19937(1, matrixSize - 1);
     } while (a == b || a > b);
 
 
@@ -343,7 +291,7 @@ void GeneticAlgorithm::OrderCO(vector<int> parent1, vector<int> parent2, vector<
 
 
 
-void GeneticAlgorithm::EnhancedSequentialCO(vector<int> parent1, vector<int> parent2, vector<int> &offspring) {
+void GeneticAlgorithm::crossover_ESCX(vector<int> parent1, vector<int> parent2, vector<int> &offspring) {
 
     int omitted = 0, inserted = 0;
     vector<int> visitedOffspring(matrixSize, 0);
@@ -417,13 +365,12 @@ void GeneticAlgorithm::EnhancedSequentialCO(vector<int> parent1, vector<int> par
     }
 
     offspring.at(matrixSize + 1) = calculateCost(offspring);
-
-    //showVector(offspring);
 }
 
 
 
-void GeneticAlgorithm::mutation(vector<int> &ind) {
+void GeneticAlgorithm::mutation(vector<int> &generation) {
+
     random_device randomSrc;
     default_random_engine randomGen(randomSrc());
     uniform_int_distribution<> nodeRand(1, matrixSize - 1);
@@ -434,30 +381,14 @@ void GeneticAlgorithm::mutation(vector<int> &ind) {
 
     int i, j, balance = 0;
 
-
     if (mutationType == 0) {
-        for (int k = 0; k < 2; k++) { //po 2 losowania, wybierane lepsze
-            do {
-                i = nodeRand(randomGen);
-                j = nodeRand(randomGen);
-            } while (i == j || j < i);
-
-            calculateSwap(i, j, balance, ind);
-            if (balance < bestBalance) {
-                bestI = i;
-                bestJ = j;
-                bestBalance = balance;
-            }
-        }
-        swapVector(bestI, bestJ, ind);
-    } else if (mutationType == 2) {
         for (int k = 0; k < 2; k++) {
             do {
                 i = nodeRand(randomGen);
                 j = nodeRand(randomGen);
             } while (i == j || j < i);
 
-            calculateReverse(i, j, balance, ind);
+            calculateReverseMutation(i, j, balance, generation);
             if (balance < bestBalance) {
                 bestI = i;
                 bestJ = j;
@@ -465,7 +396,7 @@ void GeneticAlgorithm::mutation(vector<int> &ind) {
             }
         }
 
-        reverseVector(bestI, bestJ, ind);
+        reverseMutation(bestI, bestJ, generation);
     } else if (mutationType == 1) {
         for (int k = 0; k < 2; k++) {
             do {
@@ -473,38 +404,90 @@ void GeneticAlgorithm::mutation(vector<int> &ind) {
                 j = nodeRand(randomGen);
             } while (i == j - 1 || i == j || i == j + 1);
 
-            calculateInsert(i, j, balance, ind);
+            calculateInsertMutation(i, j, balance, generation);
             if (balance < bestBalance) {
                 bestI = i;
                 bestJ = j;
                 bestBalance = balance;
             }
         }
-        insertVector(bestI, bestJ, ind);
+        insertMutation(bestI, bestJ, generation);
     }
 
-    ind.at(matrixSize + 1) += bestBalance;
+    generation.at(matrixSize + 1) += bestBalance;
 }
 
 
 
-void GeneticAlgorithm::sortVector(vector<vector<int>> &vect) {
+void GeneticAlgorithm::sortVector(vector<vector<int>> &toSort) {
 
-    std::sort(vect.begin(), vect.end(),
-              [&](const std::vector<int> &a, const std::vector<int> &b) {
+    sort(toSort.begin(), toSort.end(),[&](const vector<int> &a, const vector<int> &b) {
         return a.at(matrixSize + 1) < b.at(matrixSize + 1);
     });
 }
 
 
 
-void GeneticAlgorithm::overwritePopulation(vector<vector<int>> &population, vector<vector<int>> popul) {
+void GeneticAlgorithm::overwritePopulation(vector<vector<int>> &oldPopulation, vector<vector<int>> newPopulation) {
 
     // elitaryzm - tutaj wynosi 5
     int elitismNumber = 5;
 
-    for (int i = elitismNumber; i < population.size(); i++)
-        population.at(i) = popul.at(i - elitismNumber);
+    for (int i = elitismNumber; i < oldPopulation.size(); i++)
+        oldPopulation.at(i) = newPopulation.at(i - elitismNumber);
 }
 
 
+
+int GeneticAlgorithm::calculateCost(vector<int> path) {
+
+    int sum = 0;
+    int i, j;
+    for (int iter = 0; iter < matrixSize; iter++) {
+        i = path.at(iter);
+        j = path.at(iter + 1);
+        sum += matrix[i][j];
+    }
+    return sum;
+}
+
+
+
+void GeneticAlgorithm::insertMutation(int a, int b, vector<int> &path) {
+    path.insert(path.begin() + b, path.at(a));
+    if (b > a)
+        path.erase(path.begin() + a);
+    else
+        path.erase(path.begin() + a + 1);
+}
+
+
+
+void GeneticAlgorithm::calculateInsertMutation(int i, int j, int &balance, vector<int> path) {
+    balance = 0 - matrix[path.at(i)][path.at(i + 1)];
+    balance = balance - matrix[path.at(j - 1)][path.at(j)];
+    balance = balance - matrix[path.at(i - 1)][path.at(i)];
+    balance = balance + matrix[path.at(i - 1)][path.at(i + 1)];
+    balance = balance + matrix[path.at(j - 1)][path.at(i)];
+    balance = balance + matrix[path.at(i)][path.at(j)];
+}
+
+
+
+void GeneticAlgorithm::reverseMutation(int a, int b, vector<int> &path) {
+    reverse(path.begin() + a, path.begin() + b + 1);
+}
+
+
+
+void GeneticAlgorithm::calculateReverseMutation(int i, int j, int &balance, vector<int> path) {
+
+    balance =
+            0 - matrix[path.at(i - 1)][path.at(i)] - matrix[path.at(j)][path.at(j + 1)];
+    balance = balance + matrix[path.at(i - 1)][path.at(j)] +
+            matrix[path.at(i)][path.at(j + 1)];
+
+    for (int k = i; k < j; k++)
+        balance = balance - matrix[path.at(k)][path.at(k + 1)] +
+                matrix[path.at(k + 1)][path.at(k)];
+}

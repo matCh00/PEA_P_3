@@ -32,6 +32,7 @@ void Tests::GA() {
     vector<int> population = {10};
     vector<bool> mutationType = {0, 1};
     vector<float> mutationProbability = {0.01};
+    vector<bool> crossType = {0, 1};
     vector<float> crossProbability = {0.8};
 
     // GA
@@ -59,12 +60,15 @@ void Tests::GA() {
 
                     for (int l = 0; l < mutationProbability.size(); ++l) {
 
-                        for (int m = 0; m < crossProbability.size(); ++m) {
+                        for (int n = 0; n < crossType.size(); ++n) {
 
-                            ga->settingsGeneticAlgorithm(timeGA[i], population[j], mutationType[k], mutationProbability[l], crossProbability[m]);
-                            exeTime = ga->algorithmGeneticAlgorithm(graph->getMatrix(), path, cost);
+                            for (int m = 0; m < crossProbability.size(); ++m) {
 
-                            file << "SA:  rozmiar: " << graph->getSize() << " koszt: " << cost << " czas wykonania: " << exeTime << endl;
+                                ga->settingsGeneticAlgorithm(timeGA[i], population[j], mutationType[k], mutationProbability[l], crossType[n], crossProbability[m]);
+                                exeTime = ga->algorithmGeneticAlgorithm(graph->getMatrix(), path, cost);
+
+                                file << "SA:  rozmiar: " << graph->getSize() << " koszt: " << cost << " czas wykonania: " << exeTime << endl;
+                            }
                         }
                     }
                 }
