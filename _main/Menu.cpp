@@ -22,7 +22,7 @@ void Menu::startMenu() {
     string name;
 
     // defaultowe ustawienia algorytmu
-    timeGA = 5;
+    timeGA = 60;
     populationSize = 50;
     mutationType = 1;
     mutationProbability = 0.01;
@@ -36,7 +36,8 @@ void Menu::startMenu() {
     while (run) {
 
         cout << "\n [1] - wczytaj dane z pliku \n"    // C:/Users/matic/Desktop/PEA/sourcesAsymmetricTSP/ftv170.atsp
-                "  [2] - algorytm genetyczny \n"
+                " [2] - wyswietl dane \n"
+                "  [3] - algorytm genetyczny \n"
                 " [9] - pomiary automatyczne \n"
                 " [0] - wyjscie \n";
 
@@ -52,6 +53,11 @@ void Menu::startMenu() {
                 break;
 
             case 2:
+                cout << "wczytane dane: \n";
+                graph->display();
+                break;
+
+            case 3:
                 if (graph != nullptr) {
 
                     int choose;
@@ -83,7 +89,7 @@ void Menu::startMenu() {
                         else if (choose == 2) {
 
                             int x;
-                            cout << "1) czas   2) populacja   3) typ mutacji   4) P(mutacja)   5) P(krzyzowanie)  ";
+                            cout << "1) czas   2) populacja   3) typ mutacji   4) P(mutacja)   5) typ krzyzowania   6) P(krzyzowanie)  ";
                             cin >> x;
 
                             if (x == 1) {
@@ -99,7 +105,7 @@ void Menu::startMenu() {
                                 cout << "P(mutacja) <0,1>: "; cin >> mutationProbability;
                             }
                             else if (x == 5) {
-                                cout << "typ krzyżowania: "; cin >> crossType;
+                                cout << "typ krzyzowania: "; cin >> crossType;
                             }
                             else if (x == 6) {
                                 cout << "P(krzyzowanie) <0,1>: "; cin >> crossProbability;

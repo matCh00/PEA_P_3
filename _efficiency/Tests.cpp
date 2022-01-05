@@ -28,12 +28,14 @@ void Tests::GA() {
     double exeTime;
 
     // parametry GA
-    vector<time_t> timeGA = {5, 10};
-    vector<int> population = {10};
+    vector<time_t> timeGA = {30};
+    vector<int> population = {10, 50, 100, 150, 200};
     vector<bool> mutationType = {0, 1};
-    vector<float> mutationProbability = {0.01};
+    vector<float> mutationProbability1 = {0.01};
+    vector<float> mutationProbability2 = {0.01, 0.05, 0.10};
     vector<bool> crossType = {0, 1};
-    vector<float> crossProbability = {0.8};
+    vector<float> crossProbability1 = {0.8};
+    vector<float> crossProbability2 = {0.5, 0.7, 0.9};
 
     // GA
     GeneticAlgorithm *ga = new GeneticAlgorithm();
@@ -58,13 +60,36 @@ void Tests::GA() {
 
                 for (int k = 0; k < mutationType.size(); ++k) {
 
-                    for (int l = 0; l < mutationProbability.size(); ++l) {
+                    for (int l = 0; l < mutationProbability1.size(); ++l) {
 
                         for (int n = 0; n < crossType.size(); ++n) {
 
-                            for (int m = 0; m < crossProbability.size(); ++m) {
+                            for (int m = 0; m < crossProbability2.size(); ++m) {
 
-                                ga->settingsGeneticAlgorithm(timeGA[i], population[j], mutationType[k], mutationProbability[l], crossType[n], crossProbability[m]);
+                                ga->settingsGeneticAlgorithm(timeGA[i], population[j], mutationType[k], mutationProbability1[l], crossType[n], crossProbability2[m]);
+                                exeTime = ga->algorithmGeneticAlgorithm(graph->getMatrix(), path, cost);
+
+                                file << "SA:  rozmiar: " << graph->getSize() << " koszt: " << cost << " czas wykonania: " << exeTime << endl;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < timeGA.size(); ++i) {
+
+            for (int j = 0; j < population.size(); ++j) {
+
+                for (int k = 0; k < mutationType.size(); ++k) {
+
+                    for (int l = 0; l < mutationProbability2.size(); ++l) {
+
+                        for (int n = 0; n < crossType.size(); ++n) {
+
+                            for (int m = 0; m < crossProbability1.size(); ++m) {
+
+                                ga->settingsGeneticAlgorithm(timeGA[i], population[j], mutationType[k], mutationProbability2[l], crossType[n], crossProbability1[m]);
                                 exeTime = ga->algorithmGeneticAlgorithm(graph->getMatrix(), path, cost);
 
                                 file << "SA:  rozmiar: " << graph->getSize() << " koszt: " << cost << " czas wykonania: " << exeTime << endl;

@@ -42,7 +42,7 @@ private:
     void generateFirstPopulation(vector<vector<int>> &firstPopulation);
 
     // algorytm losowo zachłanny generowania ścieżki
-    // kilka miast jest generowanych losowo, reszta zachłannie
+    // część miast jest generowanych losowo, część zachłannie
     int randomGreedyAlgorithm(vector<int> &generatedPath);
 
     // sortowanie populacji

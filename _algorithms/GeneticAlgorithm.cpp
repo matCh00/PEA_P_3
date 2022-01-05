@@ -15,7 +15,7 @@ GeneticAlgorithm::~GeneticAlgorithm() {
 /*
  * Algorytm genetyczny
  */
-// TODO dodać komentarze do kodu, opisać ESCX
+// TODO dodać komentarze do ESCX, można coś pozmieniać
 void GeneticAlgorithm::settingsGeneticAlgorithm(time_t executionTime, int populationSize, bool mutationType, float mutationProbability, bool crossType, float crossProbability) {
 
     this->executionTime = executionTime;
@@ -39,8 +39,7 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
     matrixSize = originalMatrix.size();
 
     // najlepsza ścieżka, ostatnim elementem jest jej koszt
-    vector<int> best;
-    best.resize(matrixSize + 2);
+    vector<int> best(matrixSize + 2);
 
     // populacja
     vector<vector<int>> population;
@@ -55,6 +54,8 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
 
     // generowanie początkowej populacji
     generateFirstPopulation(population);
+
+    time_t seconds = 0;
 
     // wykonywanie przez określony czas
     while (timer.stop() < executionTime) {
@@ -101,6 +102,12 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
 
         // zwalnianie pamięci
         newPopulation.clear();
+
+        if (timer.stop() > seconds) {
+            cout << timer.stop() << "s " << best.at(matrixSize + 1) << endl;
+            seconds += 5;
+        }
+
     }
 
     // najlepszy znaleziony koszt
@@ -145,15 +152,13 @@ int GeneticAlgorithm::randomGreedyAlgorithm(vector<int> &generatedPath) {
     Randomize r;
 
     // zmienne algorytmu
-    int localMin = 0, bestMin, currentBest = 0, oldBest, randomCity;
+    int localMin = 0, bestMin, currentBest = 0, oldBest, randomNode;
     bool ifVisited;
 
-    vector<int> visited;
-    visited.resize(matrixSize);
-    fill(visited.begin(), visited.end(), 0);
+    vector<int> visited(matrixSize, 0);
 
     // miasta wygenerowane losowo, reszta zachłannie
-    int randomNodes = 3;
+    int randomNodes = populationSize / 2;
 
     for (int i = 0; i < matrixSize; i++) {
 
@@ -167,19 +172,19 @@ int GeneticAlgorithm::randomGreedyAlgorithm(vector<int> &generatedPath) {
 
             while (ifVisited == false) {
 
-                randomCity = r.random_mt19937(0, matrixSize - 1);
+                randomNode = r.random_mt19937(0, matrixSize - 1);
                 ifVisited = true;
 
                 for (int k = 0; k <= i; k++) {
 
-                    if (randomCity == visited[k]) {
+                    if (randomNode == visited[k]) {
                         ifVisited = false;
                     }
                 }
             }
 
-            currentBest = randomCity;
-            bestMin = matrix[oldBest][randomCity];
+            currentBest = randomNode;
+            bestMin = matrix[oldBest][randomNode];
             randomNodes--;
 
         }
@@ -235,9 +240,7 @@ vector<int> GeneticAlgorithm::tournamentSelection(vector<vector<int>> currentPop
     default_random_engine randomGen(randomSrc());
     uniform_int_distribution<> indRand(0, currentPopulation.size() - 1);
 
-    int number = 2;
-
-    for (int i = 1; i <= number; i++) {
+    for (int i = 1; i <= 2; i++) {
 
         // najlepszy możliwy
         if (i == 1)
@@ -449,9 +452,7 @@ void GeneticAlgorithm::crossover_ESCX(vector<int> parent1, vector<int> parent2, 
 
 void GeneticAlgorithm::mutation(vector<int> &generation) {
 
-    random_device randomSrc;
-    default_random_engine randomGen(randomSrc());
-    uniform_int_distribution<> nodeRand(1, matrixSize - 1);
+    Randomize r;
 
     int bestI = 0, bestJ = 0, bestBalance = INT_MAX, i, j, balance = 0;
 
@@ -463,8 +464,8 @@ void GeneticAlgorithm::mutation(vector<int> &generation) {
 
             // losujemy dwa różne wierzchołki
             do {
-                i = nodeRand(randomGen);
-                j = nodeRand(randomGen);
+                i = r.random_engine(1, matrixSize - 1);
+                j = r.random_engine(1, matrixSize - 1);
             } while (i == j || j < i);
 
             // obliczamy balans po mutacji
@@ -490,8 +491,8 @@ void GeneticAlgorithm::mutation(vector<int> &generation) {
 
             // losujemy dwa różne wierzchołki
             do {
-                i = nodeRand(randomGen);
-                j = nodeRand(randomGen);
+                i = r.random_engine(1, matrixSize - 1);
+                j = r.random_engine(1, matrixSize - 1);
             } while (i == j - 1 || i == j || i == j + 1);
 
             // obliczamy balans po mutacji
@@ -542,8 +543,7 @@ void GeneticAlgorithm::overwritePopulation(vector<vector<int>> &oldPopulation, v
 
 int GeneticAlgorithm::calculateCost(vector<int> path) {
 
-    int sum = 0;
-    int a, b;
+    int sum = 0, a, b;
 
     for (int i = 0; i < matrixSize; i++) {
         a = path.at(i);
