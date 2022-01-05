@@ -38,14 +38,14 @@ private:
     // czas wykonania
     time_t executionTime;
 
-    // generowanie początkowej populacji
+    // generowanie początkowej populacji algorytmem losowo zachłannym
     void generateFirstPopulation(vector<vector<int>> &firstPopulation);
 
     // algorytm losowo zachłanny generowania ścieżki
     int randomGreedyAlgorithm(vector<int> &generatedPath);
 
-    // sortowanie wektora
-    void sortVector(vector<vector<int>> &toSort);
+    // sortowanie populacji -> na indeksie 0 zawsze najlepsze rozwiązanie, na ostatniej pozycji najgorsze
+    void sortPopulation(vector<vector<int>> &toSort);
 
     // nadpisywanie populacji <- ELITARYZM
     void overwritePopulation(vector<vector<int>> &oldPopulation, vector<vector<int>> newPopulation);

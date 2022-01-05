@@ -15,7 +15,7 @@ GeneticAlgorithm::~GeneticAlgorithm() {
 /*
  * Algorytm genetyczny
  */
-// TODO opisać algorytm i dodać komentarze do kodu, duże wyniki - są mniejsze po czasie ale i tak za duże, zwrócić optymalną ścieżkę
+// TODO opisać algorytm i dodać komentarze do kodu, uporządkować kod i może uprościć / pozmieniać
 void GeneticAlgorithm::settingsGeneticAlgorithm(time_t executionTime, int populationSize, bool mutationType, float mutationProbability, bool crossType, float crossProbability) {
 
     this->executionTime = executionTime;
@@ -38,35 +38,48 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
     matrix = originalMatrix;
     matrixSize = originalMatrix.size();
 
+    // najlepsza ścieżka, ostatnim elementem jest jej koszt
     vector<int> best;
     best.resize(matrixSize + 2);
 
+    // populacja
     vector<vector<int>> population;
-    vector<int> parent1, parent2;
-    vector<int> offspring1(matrixSize + 2, 0), offspring2(matrixSize + 2, 0);
 
-    // początkowa populacja
+    // rodzice
+    vector<int> parent1;
+    vector<int> parent2;
+
+    // potomstwo
+    vector<int> offspring1(matrixSize + 2, 0);
+    vector<int> offspring2(matrixSize + 2, 0);
+
+    // generowanie początkowej populacji
     generateFirstPopulation(population);
-
 
     // wykonywanie przez określony czas
     while (timer.stop() < executionTime) {
 
+        // nowa populacja
         vector<vector<int>> newPopulation;
 
         while (newPopulation.size() != populationSize) {
+
+            // selekcja turniejowa dwóch rodziców
             parent1 = tournamentSelection(population);
             parent2 = tournamentSelection(population);
 
+            // krzyżowanie rodziców z ustalonym prawdopodobieństwem
             if (static_cast<float>(rand()) / RAND_MAX < crossProbability) {
                 crossover(parent1, parent2, offspring1, offspring2);
             }
 
+            // mutacja pierwszego potomka z ustalonym prawdopodobieństwem
             if (static_cast<float>(rand()) / RAND_MAX < mutationProbability) {
                 mutation(offspring1);
                 newPopulation.push_back(offspring1);
 
-                //----crossover enchanced generuja tylko 1 potomka
+                // mutacja drugiego potomka z ustalonym prawdopodobieństwem
+                // opcja [1] - (crossover ESCX) generuje tylko 1 potomka
                 if (crossType == 0) {
                     mutation(offspring2);
                     newPopulation.push_back(offspring2);
@@ -74,19 +87,38 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
             }
         }
 
-        sortVector(newPopulation);
+        // sortowanie nowej populacji
+        sortPopulation(newPopulation);
 
+        // nadpisanie populacji (ELITARYZM - kilka najlepszych osobników ze starej populacji + reszta z nowej populacji)
         overwritePopulation(population, newPopulation);
-        sortVector(population);
+
+        // sortowanie populacji
+        sortPopulation(population);
+
+        // najlepsze dotychczasowe rozwiązanie
         best = population.at(0);
+
+        // zwalnianie pamięci
+        newPopulation.clear();
     }
 
-    // najlepsze znalezione rozwiązanie
+    // najlepszy znaleziony koszt
     bestCost = best.at(matrixSize + 1);
 
+    // najlepsza znaleziona ścieżka
     best.erase(best.end() - 1);
     bestPath = best;
 
+    // zwalnianie pamięci
+    best.clear();
+    population.clear();
+    parent1.clear();
+    parent2.clear();
+    offspring1.clear();
+    offspring2.clear();
+
+    // czas wykonania
     return timer.stop();
 }
 
@@ -96,11 +128,14 @@ void GeneticAlgorithm::generateFirstPopulation(vector<vector<int>> &firstPopulat
 
     for (int i = 0; i < populationSize; i++) {
         vector<int> route;
-        route.push_back(randomGreedyAlgorithm(route)); // losowo zachlannym
+
+        // algorytm losowo zachłanny
+        route.push_back(randomGreedyAlgorithm(route));
         firstPopulation.push_back(route);
     }
 
-    sortVector(firstPopulation);
+    // sortowanie populacji
+    sortPopulation(firstPopulation);
 }
 
 
@@ -118,12 +153,14 @@ int GeneticAlgorithm::randomGreedyAlgorithm(vector<int> &generatedPath) {
 
     bool ifVisited;
     int randomNode;
-    int remainingNodes = 3;
+
+    // miasta wygenerowane losowo, reszta zachłannie
+    int randomNodes = 3;
 
     for (int i = 0; i < matrixSize; i++) {
         bestMin = INT_MAX;
         oldTempBest = tempBest;
-        if (remainingNodes != 0) {
+        if (randomNodes != 0) {
             ifVisited = false;
             while (ifVisited == false) {
                 randomNode = r.random_mt19937(0, matrixSize - 1);
@@ -136,7 +173,7 @@ int GeneticAlgorithm::randomGreedyAlgorithm(vector<int> &generatedPath) {
             }
             tempBest = randomNode;
             bestMin = matrix[oldTempBest][randomNode];
-            remainingNodes--;
+            randomNodes--;
 
         } else {
             for (int j = 0; j < matrixSize; j++) {
@@ -419,7 +456,7 @@ void GeneticAlgorithm::mutation(vector<int> &generation) {
 
 
 
-void GeneticAlgorithm::sortVector(vector<vector<int>> &toSort) {
+void GeneticAlgorithm::sortPopulation(vector<vector<int>> &toSort) {
 
     sort(toSort.begin(), toSort.end(),[&](const vector<int> &a, const vector<int> &b) {
         return a.at(matrixSize + 1) < b.at(matrixSize + 1);
