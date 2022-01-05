@@ -42,18 +42,18 @@ private:
     void generateFirstPopulation(vector<vector<int>> &firstPopulation);
 
     // algorytm losowo zachłanny generowania ścieżki
+    // kilka miast jest generowanych losowo, reszta zachłannie
     int randomGreedyAlgorithm(vector<int> &generatedPath);
 
-    // sortowanie populacji -> na indeksie 0 zawsze najlepsze rozwiązanie, na ostatniej pozycji najgorsze
+    // sortowanie populacji
+    // na indeksie 0 zawsze najlepsze rozwiązanie, na ostatniej pozycji najgorsze
     void sortPopulation(vector<vector<int>> &toSort);
 
-    // nadpisywanie populacji <- ELITARYZM
+    // nadpisywanie populacji
+    // ELITARYZM -> kilka najlepszych osobników ze starej populacji + reszta z nowej populacji
     void overwritePopulation(vector<vector<int>> &oldPopulation, vector<vector<int>> newPopulation);
 
-    // mutacja
-    void mutation(vector<int> &generation);
-
-    // krzyżowanie
+    // krzyżowanie rodziców
     void crossover(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
 
     // metoda krzyżowania - Order Crossover
@@ -63,10 +63,14 @@ private:
     void crossover_ESCX(vector<int> parent1, vector<int> parent2, vector<int> &offspring);
 
     // selekcja rodziców - Turniejowa
+    // losuje 2 osobników i wybiera lepszego
     vector<int> tournamentSelection(vector<vector<int>> currentPopulation);
 
     // liczenie kosztu ścieżki
     int calculateCost(vector<int> path);
+
+    // mutacja potomków
+    void mutation(vector<int> &generation);
 
     // metoda mutacji - Reverse
     void reverseMutation(int a, int b, vector<int> &path);
