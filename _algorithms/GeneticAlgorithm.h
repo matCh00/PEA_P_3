@@ -1,5 +1,9 @@
 /*
- * Algorytm genetyczny
+ * Algorytm genetyczny jest heurystyką przeszukującą przestrzeń alternatywnych rozwiązań bazującą na zjawisku
+ * ewolucji biologicznej. Zadaniem algorytmu jest symulowanie populacji danego rozwiązania dążącego do uzyskania
+ * jak najlepszego rozwiązania badanego problemu. Wykorzystując naturalne mechanizmy takie jak rozmnażanie czy mutację
+ * osobników staramy się przystosować kolejne pokolenia rozwiązań by coraz bardziej zbliżać się do optymalnego
+ * rozwiązania (bez gwarancji na jego odnalezienie).
  */
 
 #ifndef PEA_P_3_GENETICALGORITHM_H
@@ -56,11 +60,11 @@ private:
     // krzyżowanie rodziców
     void crossover(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
 
-    // metoda krzyżowania - Order Crossover
-    void crossover_OX(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
+    // operator krzyżowania - Partially Matched Crossover
+    void crossover_PMX(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
 
-    // metoda krzyżowania - Enhanced Sequential Constructive Crossover
-    void crossover_ESCX(vector<int> parent1, vector<int> parent2, vector<int> &offspring);
+    // operator krzyżowania - Order Crossover
+    void crossover_OX(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
 
     // selekcja rodziców - Turniejowa
     // losuje 2 osobników i wybiera lepszego

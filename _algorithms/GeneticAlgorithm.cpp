@@ -13,7 +13,11 @@ GeneticAlgorithm::~GeneticAlgorithm() {
 
 
 /*
- * Algorytm genetyczny
+ * Algorytm genetyczny jest heurystyką przeszukującą przestrzeń alternatywnych rozwiązań bazującą na zjawisku
+ * ewolucji biologicznej. Zadaniem algorytmu jest symulowanie populacji danego rozwiązania dążącego do uzyskania
+ * jak najlepszego rozwiązania badanego problemu. Wykorzystując naturalne mechanizmy takie jak rozmnażanie czy mutację
+ * osobników staramy się przystosować kolejne pokolenia rozwiązań by coraz bardziej zbliżać się do optymalnego
+ * rozwiązania (bez gwarancji na jego odnalezienie).
  */
 // TODO dodać komentarze do ESCX, można coś pozmieniać
 void GeneticAlgorithm::settingsGeneticAlgorithm(time_t executionTime, int populationSize, bool mutationType, float mutationProbability, bool crossType, float crossProbability) {
@@ -78,13 +82,8 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
             if (static_cast<float>(rand()) / RAND_MAX < mutationProbability) {
                 mutation(offspring1);
                 newPopulation.push_back(offspring1);
-
-                // mutacja drugiego potomka z ustalonym prawdopodobieństwem
-                // opcja [1] - (crossover ESCX) generuje tylko 1 potomka
-                if (crossType == 0) {
-                    mutation(offspring2);
-                    newPopulation.push_back(offspring2);
-                }
+                mutation(offspring2);
+                newPopulation.push_back(offspring2);
             }
         }
 
@@ -107,7 +106,6 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
             cout << timer.stop() << "s " << best.at(matrixSize + 1) << endl;
             seconds += 5;
         }
-
     }
 
     // najlepszy znaleziony koszt
@@ -186,7 +184,6 @@ int GeneticAlgorithm::randomGreedyAlgorithm(vector<int> &generatedPath) {
             currentBest = randomNode;
             bestMin = matrix[oldBest][randomNode];
             randomNodes--;
-
         }
 
         // miasto wybierane zachłannie
@@ -265,13 +262,138 @@ void GeneticAlgorithm::crossover(vector<int> parent1, vector<int> parent2, vecto
     switch (crossType) {
 
         case 0:
-            crossover_OX(parent1, parent2, offspring1, offspring2);
+            crossover_PMX(parent1, parent2, offspring1, offspring2);
             break;
 
         case 1:
-            crossover_ESCX(parent1, parent2, offspring1);
+            crossover_OX(parent1, parent2, offspring1, offspring2);
             break;
     }
+}
+
+
+
+void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2) {
+
+    Randomize r;
+
+    vector<bool> visitedOffspring1(matrixSize, 0);
+    vector<bool> visitedOffspring2(matrixSize, 0);
+
+    int a, b;
+
+    // losujemy dwa różne indeksy
+    do {
+        a = r.random_engine(1, matrixSize - 1);
+        b = r.random_engine(1, matrixSize - 1);
+    } while (a == b || a > b);
+
+    for (int i = a; i < b; i++) {
+        offspring1.at(i)=parent2.at(i);
+        offspring2.at(i)=parent1.at(i);
+        visitedOffspring1.at(parent2.at(i)) = 1;
+        visitedOffspring2.at(parent1.at(i)) = 1;
+    }
+
+    for (int i = a-1; i >=0; i--) {
+
+        if (visitedOffspring1.at(parent1.at(i)) != 1) {
+            offspring1.at(i)=parent1.at(i);
+            if (parent1.at(i) != 0)
+                visitedOffspring1.at(parent1.at(i)) = 1;
+        }
+        else
+            offspring1.at(i) = 1000;
+
+        if (visitedOffspring2.at(parent2.at(i)) != 1) {
+            offspring2.at(i) = parent2.at(i);
+            if (parent2.at(i) != 0)
+                visitedOffspring2.at(parent2.at(i)) = 1;
+        }
+        else
+            offspring2.at(i) = 1000;
+    }
+
+
+    for (int i = b; i <= matrixSize; i++) {
+
+        if (visitedOffspring1.at(parent1.at(i)) != 1) {
+            offspring1.at(i)=parent1.at(i);
+            visitedOffspring1.at(parent1.at(i)) = 1;
+        }
+        else
+            offspring1.at(i)=1000;
+
+        if (visitedOffspring2.at(parent2.at(i))!= 1) {
+            offspring2.at(i) = parent2.at(i);
+            visitedOffspring2.at(parent2.at(i)) = 1;
+        }
+        else
+            offspring2.at(i) = 1000;
+    }
+
+    int temp;
+    bool continueAlg = true;
+
+    for (int i = 0; i < matrixSize; i++) {
+
+        if (offspring1.at(i) == 1000) {
+            temp = i;
+
+            while (continueAlg == true) {
+
+                for (int j=0; j < matrixSize; j++) {
+
+                    if (parent2.at(j) == parent1.at(temp)) {
+
+                        if (visitedOffspring1.at(parent1.at(j)) != 1) {
+
+                            offspring1.at(i) = parent1.at(j);
+                            continueAlg = false;
+                            break;
+                        }
+                        else {
+                            temp = j;
+                        }
+                    }
+                }
+            }
+            continueAlg = true;
+        }
+
+        if (offspring2.at(i) == 1000) {
+
+            temp = i;
+
+            while (continueAlg == true) {
+
+                for (int j = 0; j < matrixSize; j++) {
+
+                    if (parent1.at(j) == parent2.at(temp)) {
+
+                        if (visitedOffspring2.at(parent2.at(j)) != 1) {
+
+                            offspring2.at(i) = parent2.at(j);
+                            continueAlg = false;
+                            break;
+                        }
+                        else {
+                            temp = j;
+                        }
+                    }
+                }
+            }
+            continueAlg = true;
+        }
+    }
+
+    // ostatnim elementem jest koszt ścieżki
+    offspring1.at(matrixSize + 1) = calculateCost(offspring1);
+    offspring2.at(matrixSize + 1) = calculateCost(offspring2);
+
+    // zwolnienie pamięci
+    visitedOffspring1.clear();
+    visitedOffspring2.clear();
 }
 
 
@@ -363,89 +485,6 @@ void GeneticAlgorithm::crossover_OX(vector<int> parent1, vector<int> parent2, ve
     // zwolnienie pamięci
     visitedOffspring1.clear();
     visitedOffspring2.clear();
-}
-
-
-
-void GeneticAlgorithm::crossover_ESCX(vector<int> parent1, vector<int> parent2, vector<int> &offspring) {
-
-    vector<int> visitedOffspring(matrixSize, 0);
-    vector<int> indexParent1(matrixSize, 0);
-    vector<int> indexParent2(matrixSize, 0);
-
-    for (int i = 0; i < matrixSize; i++) {
-        indexParent1.at(parent1.at(i)) = i;
-        indexParent2.at(parent2.at(i)) = i;
-    }
-
-    offspring.at(0) = 0;
-
-    int node1, node2, minimum1 = INT_MAX, minimum2 = INT_MAX;
-
-    for (int i = 0; i < matrixSize; i++) {
-        if (visitedOffspring.at(i) != 1 && matrix[parent1.at(1)][i] < minimum1)
-            minimum1 = matrix[parent1.at(1)][i];
-
-        if (visitedOffspring.at(i) != 1 && matrix[parent2.at(1)][i] < minimum2)
-            minimum2 = matrix[parent2.at(1)][i];
-    }
-
-    if (matrix[0][parent1.at(1)] + minimum1 < matrix[0][parent2.at(1)] + minimum2) {
-        offspring.at(1) = parent1.at(1);
-        visitedOffspring.at(parent1.at(1)) = 1;
-    } else {
-        offspring.at(1) = parent2.at(1);
-        visitedOffspring.at(parent2.at(1)) = 1;
-    }
-
-    for (int i = 2; i < matrixSize; i++) {
-        if (indexParent1.at(offspring.at(i - 1)) + 1 <= matrixSize - 1 &&
-        visitedOffspring.at(parent1.at(indexParent1.at(offspring.at(i - 1)) + 1)) != 1) {
-            node1 = parent1.at(indexParent1.at(offspring.at(i - 1)) + 1);
-        } else {
-            for (int j = 1; j < matrixSize; j++)
-                if (visitedOffspring.at(j) != 1) {
-                    node1 = j;
-                    break;
-                }
-        }
-        if (indexParent2.at(offspring.at(i - 1)) + 1 <= matrixSize - 1 &&
-        visitedOffspring.at(parent2.at(indexParent2.at(offspring.at(i - 1)) + 1)) != 1) {
-            node2 = parent2.at(indexParent2.at(offspring.at(i - 1)) + 1);
-        } else {
-            for (int j = 1; j < matrixSize; j++)
-                if (visitedOffspring.at(j) != 1) {
-                    node2 = j;
-                    break;
-                }
-        }
-
-        minimum1 = INT_MAX, minimum2 = INT_MAX;
-
-        for (int j = 0; j < matrixSize; j++) {
-            if (visitedOffspring.at(j) != 1 && matrix[parent1.at(1)][j] < minimum1)
-                minimum1 = matrix[node1][j];
-
-            if (visitedOffspring.at(j) != 1 && matrix[parent2.at(1)][j] < minimum2)
-                minimum2 = matrix[node2][j];
-        }
-
-        if (matrix[offspring.at(i - 1)][node1] + minimum1 < matrix[offspring.at(i - 1)][node2] + minimum2) {
-            offspring.at(i) = node1;
-            visitedOffspring.at(node1) = 1;
-        } else {
-            offspring.at(i) = node2;
-            visitedOffspring.at(node2) = 1;
-        }
-    }
-
-    // ostatnim elementem jest koszt ścieżki
-    offspring.at(matrixSize + 1) = calculateCost(offspring);
-
-    // zwolnienie pamięci
-    visitedOffspring.clear();
-    indexParent1.clear();
-    indexParent2.clear();
 }
 
 

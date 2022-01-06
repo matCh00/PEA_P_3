@@ -23,10 +23,10 @@ void Menu::startMenu() {
 
     // defaultowe ustawienia algorytmu
     timeGA = 60;
-    populationSize = 50;
-    mutationType = 1;
+    populationSize = 10;
+    mutationType = 0;
     mutationProbability = 0.01;
-    crossType = 1;
+    crossType = 0;
     crossProbability = 0.8;
 
     // instancja grafu

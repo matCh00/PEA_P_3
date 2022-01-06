@@ -28,8 +28,8 @@ void Tests::GA() {
     double exeTime;
 
     // parametry GA
-    vector<time_t> timeGA = {30};
-    vector<int> population = {10, 50, 100, 150, 200};
+    vector<time_t> timeGA = {60};
+    vector<int> population = {10, 50, 100, 150};
     vector<bool> mutationType = {0, 1};
     vector<float> mutationProbability1 = {0.01};
     vector<float> mutationProbability2 = {0.01, 0.05, 0.10};
