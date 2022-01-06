@@ -19,7 +19,7 @@ GeneticAlgorithm::~GeneticAlgorithm() {
  * osobników staramy się przystosować kolejne pokolenia rozwiązań by coraz bardziej zbliżać się do optymalnego
  * rozwiązania (bez gwarancji na jego odnalezienie).
  */
-// TODO dodać komentarze do ESCX, można coś pozmieniać
+
 void GeneticAlgorithm::settingsGeneticAlgorithm(time_t executionTime, int populationSize, bool mutationType, float mutationProbability, bool crossType, float crossProbability) {
 
     this->executionTime = executionTime;
@@ -288,17 +288,20 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
         b = r.random_engine(1, matrixSize - 1);
     } while (a == b || a > b);
 
+    // nowa sekwencja wierzchołków, p1-o2, p2-o1
     for (int i = a; i < b; i++) {
-        offspring1.at(i)=parent2.at(i);
-        offspring2.at(i)=parent1.at(i);
+        offspring1.at(i) = parent2.at(i);
+        offspring2.at(i) = parent1.at(i);
         visitedOffspring1.at(parent2.at(i)) = 1;
         visitedOffspring2.at(parent1.at(i)) = 1;
     }
 
-    for (int i = a-1; i >=0; i--) {
+    // częściowe uzupełnienie potomków
+    for (int i = a - 1; i >= 0; i--) {
 
         if (visitedOffspring1.at(parent1.at(i)) != 1) {
-            offspring1.at(i)=parent1.at(i);
+            offspring1.at(i) = parent1.at(i);
+
             if (parent1.at(i) != 0)
                 visitedOffspring1.at(parent1.at(i)) = 1;
         }
@@ -314,17 +317,17 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
             offspring2.at(i) = 1000;
     }
 
-
+    // uzupełnienie potomków
     for (int i = b; i <= matrixSize; i++) {
 
         if (visitedOffspring1.at(parent1.at(i)) != 1) {
-            offspring1.at(i)=parent1.at(i);
+            offspring1.at(i) = parent1.at(i);
             visitedOffspring1.at(parent1.at(i)) = 1;
         }
         else
-            offspring1.at(i)=1000;
+            offspring1.at(i) = 1000;
 
-        if (visitedOffspring2.at(parent2.at(i))!= 1) {
+        if (visitedOffspring2.at(parent2.at(i)) != 1) {
             offspring2.at(i) = parent2.at(i);
             visitedOffspring2.at(parent2.at(i)) = 1;
         }
@@ -332,9 +335,11 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
             offspring2.at(i) = 1000;
     }
 
+    // pomocnicze
     int temp;
     bool continueAlg = true;
 
+    // edycja potomków - elementów o wartości 1000
     for (int i = 0; i < matrixSize; i++) {
 
         if (offspring1.at(i) == 1000) {
@@ -342,7 +347,7 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
 
             while (continueAlg == true) {
 
-                for (int j=0; j < matrixSize; j++) {
+                for (int j = 0; j < matrixSize; j++) {
 
                     if (parent2.at(j) == parent1.at(temp)) {
 

@@ -61,13 +61,15 @@ private:
     void crossover(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
 
     // operator krzyżowania - Partially Matched Crossover
+    // http://aragorn.pb.bialystok.pl/~wkwedlo/EA5.pdf
     void crossover_PMX(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
 
     // operator krzyżowania - Order Crossover
+    // http://aragorn.pb.bialystok.pl/~wkwedlo/EA5.pdf
     void crossover_OX(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2);
 
     // selekcja rodziców - Turniejowa
-    // losuje 2 osobników i wybiera lepszego
+    // https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_parent_selection.htm
     vector<int> tournamentSelection(vector<vector<int>> currentPopulation);
 
     // liczenie kosztu ścieżki
