@@ -28,8 +28,8 @@ void Tests::GA() {
     double exeTime;
 
     // parametry GA
-    vector<time_t> timeGA = {20, 20, 20, 20};
-    vector<int> population = {10, 50, 100, 150};
+    vector<time_t> timeGA = {20, 20, 20, 20, 20};
+    vector<int> population = {10};
     vector<bool> mutationType = {1};
     vector<float> mutationProbability1 = {0.01};
     vector<float> mutationProbability2 = {0.01, 0.05, 0.10};
@@ -76,5 +76,7 @@ void Tests::GA() {
                 }
             }
         }
+        path.clear();
+        graph->getMatrix().clear();
     }
 }

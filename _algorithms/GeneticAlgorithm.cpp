@@ -102,9 +102,10 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
         // zwalnianie pamięci
         newPopulation.clear();
 
+        // badanie wyników co sekunę
         if (timer.stop() > seconds) {
             cout << timer.stop() << "s " << best.at(matrixSize + 1) << endl;
-            seconds += 5;
+            seconds += 1;
         }
     }
 

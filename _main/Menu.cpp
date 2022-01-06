@@ -22,7 +22,7 @@ void Menu::startMenu() {
     string name;
 
     // defaultowe ustawienia algorytmu
-    timeGA = 60;
+    timeGA = 30;
     populationSize = 10;
     mutationType = 0;
     mutationProbability = 0.01;
@@ -35,7 +35,7 @@ void Menu::startMenu() {
 
     while (run) {
 
-        cout << "\n [1] - wczytaj dane z pliku \n"    // C:/Users/matic/Desktop/PEA/sourcesAsymmetricTSP/ftv170.atsp
+        cout << "\n [1] - wczytaj dane z pliku \n"
                 " [2] - wyswietl dane \n"
                 "  [3] - algorytm genetyczny \n"
                 " [9] - pomiary automatyczne \n"
