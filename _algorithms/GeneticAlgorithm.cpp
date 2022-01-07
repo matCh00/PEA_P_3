@@ -238,9 +238,10 @@ vector<int> GeneticAlgorithm::tournamentSelection(vector<vector<int>> currentPop
     default_random_engine randomGen(randomSrc());
     uniform_int_distribution<> indRand(0, currentPopulation.size() - 1);
 
+    // liczba losowań
     for (int i = 1; i <= 2; i++) {
 
-        // najlepszy możliwy
+        // pierwszy
         if (i == 1)
             best = currentPopulation.at(indRand(randomGen));
 
