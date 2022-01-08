@@ -284,13 +284,13 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
 
     int a, b;
 
-    // losujemy dwa różne indeksy
+    // losujemy dwa różne wierzchołki
     do {
         a = r.random_engine(1, matrixSize - 1);
         b = r.random_engine(1, matrixSize - 1);
     } while (a == b || a > b);
 
-    // nowa sekwencja wierzchołków, p1-o2, p2-o1
+    // kopiujemy segment pomiędzy wylosowanymi wierzchołkami
     for (int i = a; i < b; i++) {
         offspring1.at(i) = parent2.at(i);
         offspring2.at(i) = parent1.at(i);
@@ -298,7 +298,7 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
         visitedOffspring2.at(parent1.at(i)) = 1;
     }
 
-    // częściowe uzupełnienie potomków
+    // szukamy elementów, które nie zostały skopiowane (po lewej od skopiowanego segmentu)
     for (int i = a - 1; i >= 0; i--) {
 
         if (visitedOffspring1.at(parent1.at(i)) != 1) {
@@ -319,7 +319,7 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
             offspring2.at(i) = 1000;
     }
 
-    // uzupełnienie potomków
+    // szukamy elementów, które nie zostały skopiowane (po prawej od skopiowanego segmentu)
     for (int i = b; i <= matrixSize; i++) {
 
         if (visitedOffspring1.at(parent1.at(i)) != 1) {
@@ -341,7 +341,8 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
     int temp;
     bool continueAlg = true;
 
-    // edycja potomków - elementów o wartości 1000
+    // dla par (i, j) próbujemy umieścić (i) na pozycji zajmowanej przez (j) w drugim rodzicu
+    // w przeciwnym razie pozostałe wierzchołki kopiujemy z drugiego rodzica
     for (int i = 0; i < matrixSize; i++) {
 
         if (offspring1.at(i) == 1000) {
@@ -414,13 +415,13 @@ void GeneticAlgorithm::crossover_OX(vector<int> parent1, vector<int> parent2, ve
 
     int a, b;
 
-    // losujemy dwa różne indeksy
+    // losujemy dwa różne wierzchołki
     do {
         a = r.random_mt19937(1, matrixSize - 1);
         b = r.random_mt19937(1, matrixSize - 1);
     } while (a == b || a > b);
 
-    // nowa sekwencja wierzchołków, p1-o1, p2-o2
+    // kopiujemy segment pomiędzy wylosowanymi wierzchołkami
     for (int i = a; i < b; i++) {
         offspring1.at(i) = parent1.at(i);
         offspring2.at(i) = parent2.at(i);
@@ -428,10 +429,11 @@ void GeneticAlgorithm::crossover_OX(vector<int> parent1, vector<int> parent2, ve
         visitedOffspring2.at(parent2.at(i)) = 1;
     }
 
-    // pominięte
+    // liczba pominiętych wierzchołków
     int omitted = 0, omitted2 = 0;
 
-    // wstawianie sekwencji zapobiegając kolizji, p1-o2, p2-o1
+    // rozpoczynamy od b, czyli zaraz po skopiowanym segmencie (w prawo)
+    // kopiujemy wierzchołki w takiej kolejności, w jakiej występują w drugim rodzicu pomijając już skopiowane
     for (int i = b; i < matrixSize; i++) {
 
         if (visitedOffspring1.at(parent2.at(i)) != 1) {
@@ -452,7 +454,8 @@ void GeneticAlgorithm::crossover_OX(vector<int> parent1, vector<int> parent2, ve
     // pomocnicze
     int tempOmitted1 = omitted, tempOmitted2 = omitted2;
 
-    // wstawienie pozostałych miast
+    // kopiujemy wierzchołki w takiej kolejności, w jakiej występują w drugim rodzicu pomijając już skopiowane
+    // tym razem idziemy od początku, kontrolując ile wierzchołków zostało do uzupełnienia
     for (int i = 1; i < b; i++) {
 
         if (visitedOffspring1.at(parent2.at(i)) != 1) {
