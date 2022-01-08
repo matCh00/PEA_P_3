@@ -299,6 +299,8 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
     }
 
     // szukamy elementów, które nie zostały skopiowane (po lewej od skopiowanego segmentu)
+    // kopiujemy je do potomka z drugiego rodzica
+    // jeżeli element został już skopiowany w segment a-b, nadajemy mu wartość 1000
     for (int i = a - 1; i >= 0; i--) {
 
         if (visitedOffspring1.at(parent1.at(i)) != 1) {
@@ -312,6 +314,7 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
 
         if (visitedOffspring2.at(parent2.at(i)) != 1) {
             offspring2.at(i) = parent2.at(i);
+
             if (parent2.at(i) != 0)
                 visitedOffspring2.at(parent2.at(i)) = 1;
         }
@@ -320,6 +323,8 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
     }
 
     // szukamy elementów, które nie zostały skopiowane (po prawej od skopiowanego segmentu)
+    // kopiujemy je do potomka z drugiego rodzica
+    // jeżeli element został już skopiowany w segment a-b, nadajemy mu wartość 1000
     for (int i = b; i <= matrixSize; i++) {
 
         if (visitedOffspring1.at(parent1.at(i)) != 1) {
@@ -341,8 +346,8 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
     int temp;
     bool continueAlg = true;
 
+    // badamy jedynie wierzchołki, które zostały już skopiowane do potomka (te jako początkowy segment a-b)
     // dla par (i, j) próbujemy umieścić (i) na pozycji zajmowanej przez (j) w drugim rodzicu
-    // w przeciwnym razie pozostałe wierzchołki kopiujemy z drugiego rodzica
     for (int i = 0; i < matrixSize; i++) {
 
         if (offspring1.at(i) == 1000) {
@@ -620,6 +625,8 @@ void GeneticAlgorithm::insertMutation(int a, int b, vector<int> &path) {
 
 void GeneticAlgorithm::calculateInsertMutation(int i, int j, int &balance, vector<int> path) {
 
+    // obliczamy balans po możliwej mutacji
+
     balance = matrix[path.at(i)][path.at(j)] - matrix[path.at(i)][path.at(i + 1)];
     balance = balance - matrix[path.at(j - 1)][path.at(j)] - matrix[path.at(i - 1)][path.at(i)];
     balance = balance + matrix[path.at(i - 1)][path.at(i + 1)] + matrix[path.at(j - 1)][path.at(i)];
@@ -636,6 +643,8 @@ void GeneticAlgorithm::reverseMutation(int a, int b, vector<int> &path) {
 
 
 void GeneticAlgorithm::calculateReverseMutation(int i, int j, int &balance, vector<int> path) {
+
+    // obliczamy balans po możliwej mutacji
 
     balance = 0 - matrix[path.at(i - 1)][path.at(i)] - matrix[path.at(j)][path.at(j + 1)];
     balance = balance + matrix[path.at(i - 1)][path.at(j)] + matrix[path.at(i)][path.at(j + 1)];
