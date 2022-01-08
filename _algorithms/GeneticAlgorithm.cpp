@@ -76,14 +76,30 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
             // krzyżowanie rodziców z ustalonym prawdopodobieństwem
             if (static_cast<float>(rand()) / RAND_MAX < crossProbability) {
                 crossover(parent1, parent2, offspring1, offspring2);
-            }
 
-            // mutacja pierwszego potomka z ustalonym prawdopodobieństwem
-            if (static_cast<float>(rand()) / RAND_MAX < mutationProbability) {
-                mutation(offspring1);
-                newPopulation.push_back(offspring1);
-                mutation(offspring2);
-                newPopulation.push_back(offspring2);
+                // mutacja pierwszego potomka z ustalonym prawdopodobieństwem
+                if (static_cast<float>(rand()) / RAND_MAX < mutationProbability) {
+                    mutation(offspring1);
+
+                    // dodanie go do populacji po mutacji
+                    newPopulation.push_back(offspring1);
+                }
+                else {
+                    // dodanie go do populacji bez mutacji
+                    newPopulation.push_back(offspring1);
+                }
+
+                // mutacja drugiego potomka z ustalonym prawdopodobieństwem
+                if (static_cast<float>(rand()) / RAND_MAX < mutationProbability) {
+                    mutation(offspring2);
+
+                    // dodanie go do populacji po mutacji
+                    newPopulation.push_back(offspring2);
+                }
+                else {
+                    // dodanie go do populacji bez mutacji
+                    newPopulation.push_back(offspring2);
+                }
             }
         }
 
@@ -103,10 +119,10 @@ double GeneticAlgorithm::algorithmGeneticAlgorithm(vector<vector<int>> originalM
         newPopulation.clear();
 
         // badanie wyników co sekunę
-//        if (timer.stop() > seconds) {
-//            cout << timer.stop() << "s " << best.at(matrixSize + 1) << endl;
-//            seconds += 1;
-//        }
+        if (timer.stop() > seconds) {
+            cout << timer.stop() << "s " << best.at(matrixSize + 1) << endl;
+            seconds += 1;
+        }
     }
 
     // najlepszy znaleziony koszt
@@ -157,7 +173,7 @@ int GeneticAlgorithm::randomGreedyAlgorithm(vector<int> &generatedPath) {
     vector<int> visited(matrixSize, 0);
 
     // miasta wygenerowane losowo, reszta zachłannie
-    int randomNodes = populationSize / 2;
+    int randomNodes = 5;
 
     for (int i = 0; i < matrixSize; i++) {
 
@@ -229,7 +245,7 @@ int GeneticAlgorithm::randomGreedyAlgorithm(vector<int> &generatedPath) {
 
 
 
-vector<int> GeneticAlgorithm::tournamentSelection(vector<vector<int>> currentPopulation) {
+vector<int> GeneticAlgorithm::tournamentSelection(vector<vector<int>> &currentPopulation) {
 
     vector<int> best;
     vector<int> second;
@@ -253,13 +269,15 @@ vector<int> GeneticAlgorithm::tournamentSelection(vector<vector<int>> currentPop
                 best = second;
         }
     }
+    // zwolnienie pamięci
+    second.clear();
 
     return best;
 }
 
 
 
-void GeneticAlgorithm::crossover(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2) {
+void GeneticAlgorithm::crossover(vector<int> &parent1, vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2) {
 
     switch (crossType) {
 
@@ -275,7 +293,7 @@ void GeneticAlgorithm::crossover(vector<int> parent1, vector<int> parent2, vecto
 
 
 
-void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2) {
+void GeneticAlgorithm::crossover_PMX(vector<int> &parent1, vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2) {
 
     Randomize r;
 
@@ -411,7 +429,7 @@ void GeneticAlgorithm::crossover_PMX(vector<int> parent1, vector<int> parent2, v
 
 
 
-void GeneticAlgorithm::crossover_OX(vector<int> parent1, vector<int> parent2, vector<int> &offspring1, vector<int> &offspring2) {
+void GeneticAlgorithm::crossover_OX(vector<int> &parent1, vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2) {
 
     Randomize r;
 
@@ -582,7 +600,7 @@ void GeneticAlgorithm::sortPopulation(vector<vector<int>> &toSort) {
 
 
 
-void GeneticAlgorithm::overwritePopulation(vector<vector<int>> &oldPopulation, vector<vector<int>> newPopulation) {
+void GeneticAlgorithm::overwritePopulation(vector<vector<int>> &oldPopulation, vector<vector<int>> &newPopulation) {
 
     // elitaryzm -> tutaj wynosi 5
     int elitism = 5;
@@ -595,7 +613,7 @@ void GeneticAlgorithm::overwritePopulation(vector<vector<int>> &oldPopulation, v
 
 
 
-int GeneticAlgorithm::calculateCost(vector<int> path) {
+int GeneticAlgorithm::calculateCost(vector<int> &path) {
 
     int sum = 0, a, b;
 
@@ -623,7 +641,7 @@ void GeneticAlgorithm::insertMutation(int a, int b, vector<int> &path) {
 
 
 
-void GeneticAlgorithm::calculateInsertMutation(int i, int j, int &balance, vector<int> path) {
+void GeneticAlgorithm::calculateInsertMutation(int i, int j, int &balance, vector<int> &path) {
 
     // obliczamy balans po możliwej mutacji
 
@@ -642,7 +660,7 @@ void GeneticAlgorithm::reverseMutation(int a, int b, vector<int> &path) {
 
 
 
-void GeneticAlgorithm::calculateReverseMutation(int i, int j, int &balance, vector<int> path) {
+void GeneticAlgorithm::calculateReverseMutation(int i, int j, int &balance, vector<int> &path) {
 
     // obliczamy balans po możliwej mutacji
 
