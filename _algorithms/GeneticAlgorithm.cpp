@@ -245,7 +245,7 @@ int GeneticAlgorithm::randomGreedyAlgorithm(vector<int> &generatedPath) {
 
 
 
-vector<int> GeneticAlgorithm::tournamentSelection(vector<vector<int>> &currentPopulation) {
+vector<int> GeneticAlgorithm::tournamentSelection(const vector<vector<int>> &currentPopulation) {
 
     vector<int> best;
     vector<int> second;
@@ -277,7 +277,7 @@ vector<int> GeneticAlgorithm::tournamentSelection(vector<vector<int>> &currentPo
 
 
 
-void GeneticAlgorithm::crossover(vector<int> &parent1, vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2) {
+void GeneticAlgorithm::crossover(const vector<int> &parent1, const vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2) {
 
     switch (crossType) {
 
@@ -293,7 +293,7 @@ void GeneticAlgorithm::crossover(vector<int> &parent1, vector<int> &parent2, vec
 
 
 
-void GeneticAlgorithm::crossover_PMX(vector<int> &parent1, vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2) {
+void GeneticAlgorithm::crossover_PMX(const vector<int> &parent1, const vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2) {
 
     Randomize r;
 
@@ -429,7 +429,7 @@ void GeneticAlgorithm::crossover_PMX(vector<int> &parent1, vector<int> &parent2,
 
 
 
-void GeneticAlgorithm::crossover_OX(vector<int> &parent1, vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2) {
+void GeneticAlgorithm::crossover_OX(const vector<int> &parent1, const vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2) {
 
     Randomize r;
 
@@ -613,7 +613,7 @@ void GeneticAlgorithm::overwritePopulation(vector<vector<int>> &oldPopulation, v
 
 
 
-int GeneticAlgorithm::calculateCost(vector<int> &path) {
+int GeneticAlgorithm::calculateCost(const vector<int> &path) {
 
     int sum = 0, a, b;
 
@@ -641,7 +641,7 @@ void GeneticAlgorithm::insertMutation(int a, int b, vector<int> &path) {
 
 
 
-void GeneticAlgorithm::calculateInsertMutation(int i, int j, int &balance, vector<int> &path) {
+void GeneticAlgorithm::calculateInsertMutation(int i, int j, int &balance, const vector<int> &path) {
 
     // obliczamy balans po możliwej mutacji
 
@@ -660,7 +660,7 @@ void GeneticAlgorithm::reverseMutation(int a, int b, vector<int> &path) {
 
 
 
-void GeneticAlgorithm::calculateReverseMutation(int i, int j, int &balance, vector<int> &path) {
+void GeneticAlgorithm::calculateReverseMutation(int i, int j, int &balance, const vector<int> &path) {
 
     // obliczamy balans po możliwej mutacji
 

@@ -58,22 +58,22 @@ private:
     void overwritePopulation(vector<vector<int>> &oldPopulation, vector<vector<int>> &newPopulation);
 
     // krzyżowanie rodziców
-    void crossover(vector<int> &parent1, vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2);
+    void crossover(const vector<int> &parent1, const vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2);
 
     // operator krzyżowania - Partially Matched Crossover
     // http://aragorn.pb.bialystok.pl/~wkwedlo/EA5.pdf
-    void crossover_PMX(vector<int> &parent1, vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2);
+    void crossover_PMX(const vector<int> &parent1, const vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2);
 
     // operator krzyżowania - Order Crossover
     // http://aragorn.pb.bialystok.pl/~wkwedlo/EA5.pdf
-    void crossover_OX(vector<int> &parent1, vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2);
+    void crossover_OX(const vector<int> &parent1, const vector<int> &parent2, vector<int> &offspring1, vector<int> &offspring2);
 
     // selekcja rodziców - Turniejowa
     // https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_parent_selection.htm
-    vector<int> tournamentSelection(vector<vector<int>> &currentPopulation);
+    vector<int> tournamentSelection(const vector<vector<int>> &currentPopulation);
 
     // liczenie kosztu ścieżki
-    int calculateCost(vector<int> &path);
+    int calculateCost(const vector<int> &path);
 
     // mutacja potomków
     void mutation(vector<int> &generation);
@@ -82,13 +82,13 @@ private:
     void reverseMutation(int a, int b, vector<int> &path);
 
     // zliczanie kosztu ścieżki po mutacji Reverse
-    void calculateReverseMutation(int i, int j, int &balance, vector<int> &path);
+    void calculateReverseMutation(int i, int j, int &balance, const vector<int> &path);
 
     // metoda mutacji - Insert
     void insertMutation(int a, int b, vector<int> &path);
 
     // zliczanie kosztu ścieżki po mutacji Insert
-    void calculateInsertMutation(int i, int j, int &balance, vector<int> &path);
+    void calculateInsertMutation(int i, int j, int &balance, const vector<int> &path);
 
 
 public:
